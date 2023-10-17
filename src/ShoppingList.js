@@ -30,12 +30,23 @@ function ShoppingList() {
   };
 
   const handleEditItem = (index) => {
-    // Send a PUT request to edit an existing item
-    axios.put(`http://localhost:5001/items/${items[index].id}`, { name: newItem, quantity })
+    setEditIndex(index);
+    setNewItem(items[index].name);
+    setQuantity(items[index].quantity);
+  };
+
+  const handleSaveItem = (index) => {
+    // Send a PUT request to update an existing item
+    axios
+      .put(`http://localhost:5001/items/${items[index].id}`, {
+        name: newItem,
+        quantity,
+      })
       .then((response) => {
         console.log(response.data);
         // Fetch the updated list of items after editing
-        axios.get('http://localhost:5001/items')
+        axios
+          .get('http://localhost:5001/items')
           .then((response) => setItems(response.data))
           .catch((error) => console.error(error));
         setNewItem('');
@@ -75,12 +86,37 @@ function ShoppingList() {
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
         />
-        <button onClick={handleAddItem}>Add</button>
+        {editIndex === null ? (
+          <button onClick={handleAddItem}>Add</button>
+        ) : (
+          <button onClick={handleSaveItem}>Save</button>
+        )}
       </div>
       <ul>
         {items.map((item, index) => (
-          <li key={index}>
-            {item.name} - {item.quantity}
+          <li key={item.id}>
+            {editIndex === index ? (
+              <div>
+                <input
+                  type="text"
+                  value={newItem}
+                  onChange={(e) => setNewItem(e.target.value)}
+                />
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+                <button onClick={() => handleSaveItem(index)}>Save</button>
+              </div>
+            ) : (
+              `${item.name} - ${item.quantity}`
+            )}
+            {editIndex === index ? (
+              <button onClick={() => handleSaveItem(index)}>Save</button>
+            ) : (
+              <button onClick={() => handleEditItem(index)}>Edit</button>
+            )}
             <button onClick={() => handleDeleteItem(index)}>Delete</button>
           </li>
         ))}
