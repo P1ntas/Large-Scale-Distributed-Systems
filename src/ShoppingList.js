@@ -1,26 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function ShoppingList() {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [editIndex, setEditIndex] = useState(null);
+
+  useEffect(() => {
+    // Fetch items from the backend when the component mounts
+    axios.get('http://localhost:5001/items')
+      .then((response) => setItems(response.data))
+      .catch((error) => console.error(error));
+  }, []);
 
   const handleAddItem = () => {
-    if (newItem && quantity) {
-      const newItemObject = {
-        name: newItem,
-        quantity: quantity,
-      };
-      setItems([...items, newItemObject]);
-      setNewItem('');
-      setQuantity('');
-    }
+    // Send a POST request to add a new item
+    axios.post('http://localhost:5001/items', { name: newItem, quantity })
+      .then((response) => {
+        console.log(response.data);
+        // Fetch the updated list of items after adding
+        axios.get('http://localhost:5001/items')
+          .then((response) => setItems(response.data))
+          .catch((error) => console.error(error));
+        setNewItem('');
+        setQuantity('');
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const handleEditItem = (index) => {
+    // Send a PUT request to edit an existing item
+    axios.put(`http://localhost:5001/items/${items[index].id}`, { name: newItem, quantity })
+      .then((response) => {
+        console.log(response.data);
+        // Fetch the updated list of items after editing
+        axios.get('http://localhost:5001/items')
+          .then((response) => setItems(response.data))
+          .catch((error) => console.error(error));
+        setNewItem('');
+        setQuantity('');
+        setEditIndex(null);
+      })
+      .catch((error) => console.error(error));
   };
 
   const handleDeleteItem = (index) => {
-    const updatedItems = [...items];
-    updatedItems.splice(index, 1);
-    setItems(updatedItems);
+    // Send a DELETE request to remove an item
+    axios.delete(`http://localhost:5001/items/${items[index].id}`)
+      .then((response) => {
+        console.log(response.data);
+        // Fetch the updated list of items after deleting
+        axios.get('http://localhost:5001/items')
+          .then((response) => setItems(response.data))
+          .catch((error) => console.error(error));
+        setEditIndex(null);
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
