@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import socketIOClient from 'socket.io-client';
 
 function ShoppingList() {
   const [items, setItems] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
   const [newItem, setNewItem] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [editIndex, setEditIndex] = useState(null);
+  const socket = socketIOClient('http://localhost:5001'); // Replace with your server URL
 
   useEffect(() => {
     // Fetch items from the backend when the component mounts
-    axios.get('http://localhost:5001/items')
+    axios
+      .get('http://localhost:5001/items')
       .then((response) => setItems(response.data))
       .catch((error) => console.error(error));
-  }, []);
+
+    // Listen for real-time updates
+    socket.on('itemUpdate', (updatedItems) => {
+      setItems(updatedItems);
+    });
+
+    return () => {
+      // Disconnect the socket when the component unmounts
+      socket.disconnect();
+    };
+  }, [socket]);
+
 
   const handleAddItem = () => {
     // Send a POST request to add a new item
@@ -55,6 +69,7 @@ function ShoppingList() {
       })
       .catch((error) => console.error(error));
   };
+
 
   const handleDeleteItem = (index) => {
     // Send a DELETE request to remove an item

@@ -1,8 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
+const http = require('http');
+const socketIo = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
 const port = 5001;
 
 app.use(express.json());
@@ -15,6 +20,21 @@ const db = new sqlite3.Database('shopping-list.db');
 db.run(
   'CREATE TABLE IF NOT EXISTS shopping_list (id INTEGER PRIMARY KEY, name TEXT, quantity INTEGER)'
 );
+
+// API routes (unchanged)
+
+// Socket.io integration
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 // API routes
 app.get('/items', (req, res) => {
