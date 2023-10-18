@@ -84,7 +84,3 @@ app.delete('/items/:id', (req, res) => {
     res.json({ message: 'Item deleted successfully' });
   });
 });
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
