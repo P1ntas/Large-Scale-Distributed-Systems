@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import localForage from 'localforage';
 
 const UsernameForm = ({ setUsername }) => {
   const [username, setTempUsername] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await localForage.setItem('username', username);
     setUsername(username);
     navigate('/shopping-list');
   };
