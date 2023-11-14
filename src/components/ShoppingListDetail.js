@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import localForage from 'localforage';
 import { useParams, useLocation } from 'react-router-dom';
 
 function useQuery() {
@@ -16,12 +17,41 @@ const ShoppingListDetail = () => {
   const query = useQuery();
   const username = query.get('username');
 
-  const handleAddItem = () => {
+  useEffect(() => {
+    const loadItems = async () => {
+      const data = await localForage.getItem(username);
+      const list = data.shopping_lists.find(l => l.list_name === listName);
+      if (list) {
+        setItems(list.products.reduce((acc, product) => ({ ...acc, [product.name]: product.quantity }), {}));
+      }
+    };
+  
+    loadItems();
+  }, [username, listName]);
+
+  const updateStorageItems = async (newItems) => {
+    const data = await localForage.getItem(username);
+    const updatedLists = data.shopping_lists.map(list => 
+      list.list_name === listName ? 
+      { ...list, 
+        last_edited: new Date().toISOString(), 
+        products: Object.entries(newItems).map(([name, quantity]) => ({ name, quantity }))
+      } : 
+      list
+    );
+  
+    await localForage.setItem(username, { ...data, shopping_lists: updatedLists });
+  };
+
+  const handleAddItem = async () => {
     if (newItemName && !items[newItemName]) {
-      setItems({ ...items, [newItemName]: 1 });
+      const newItems = { ...items, [newItemName]: { quantity: 1, last_edited: new Date().toISOString() }};
+      setItems(newItems);
       setNewItemName('');
+      await updateStorageItems(newItems);
     }
   };
+  
 
   const handleEditToggle = (itemName) => {
     setIsEditing(itemName);
@@ -30,14 +60,18 @@ const ShoppingListDetail = () => {
     setOriginalItem({ name: itemName, quantity: items[itemName] });
   };
 
-  const handleEditItem = (oldItemName) => {
+  const handleEditItem = async (oldItemName) => {
     const newItems = { ...items };
-    delete newItems[oldItemName];
-    newItems[editItemName] = editQuantity;
-
+    if (oldItemName !== editItemName) {
+      delete newItems[oldItemName];
+    }
+    newItems[editItemName] = { quantity: editQuantity, last_edited: new Date().toISOString() };
+  
     setItems(newItems);
     setIsEditing(null);
+    await updateStorageItems(newItems);
   };
+  
 
   const handleCancelEdit = () => {
     const newItems = { ...items };
@@ -49,10 +83,11 @@ const ShoppingListDetail = () => {
     setOriginalItem({ name: '', quantity: 1 });
   };
 
-  const handleDeleteItem = (itemName) => {
+  const handleDeleteItem = async (itemName) => {
     const newItems = { ...items };
     delete newItems[itemName];
     setItems(newItems);
+    await updateStorageItems(newItems);
   };
 
   return (
@@ -67,7 +102,7 @@ const ShoppingListDetail = () => {
       <button onClick={handleAddItem}>Add Item</button>
       
       <ul>
-        {Object.entries(items).map(([itemName, quantity]) => (
+        {Object.entries(items).map(([itemName, itemDetails]) => (
           <li key={itemName}>
             {isEditing === itemName ? (
               <>
@@ -87,7 +122,7 @@ const ShoppingListDetail = () => {
               </>
             ) : (
               <>
-                {itemName} - {quantity} 
+                {itemName} - {itemDetails.quantity}
                 <button onClick={() => handleEditToggle(itemName)}>Edit</button>
                 <button onClick={() => handleDeleteItem(itemName)}>Delete</button>
               </>
