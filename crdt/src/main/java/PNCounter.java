@@ -15,7 +15,16 @@ public class PNCounter {
         this.negativeGCounter.add();
     }
 
-    public void merge(){
+    public void merge(PNCounter other){
+        if (this.positiveGCounter.counter < other.positiveGCounter.counter){
+            this.positiveGCounter.counter = other.positiveGCounter.counter;
+        }
+        if (this.negativeGCounter.counter < other.negativeGCounter.counter){
+            this.negativeGCounter.counter = other.negativeGCounter.counter;
+        }
+    }
 
+    public int value(){
+        return this.positiveGCounter.counter - this.negativeGCounter.counter;
     }
 }

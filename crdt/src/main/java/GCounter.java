@@ -14,6 +14,8 @@ public class GCounter {
         this.counter++;
     }
     public void merge (GCounter productCounter){
-
+        if (this.counter < productCounter.counter){
+            this.counter = productCounter.counter;
+        }
     }
 }
