@@ -5,12 +5,14 @@ public class Product {
     String name;
     int quantity;
     VectorClock vectorClock;
+    String lastName;
 
     public Product(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.quantity = 1;
-        this.vectorClock = new VectorClock(id, System.currentTimeMillis());
+        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
+        this.lastName = "";
     }
 
     public Product(String name, int quantity, VectorClock vectorClock) {
@@ -18,6 +20,7 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = vectorClock;
+        this.lastName = "";
     }
 
     public UUID getId() {
@@ -38,6 +41,7 @@ public class Product {
 
     //setters
     public void setName(String name) {
+        this.lastName = this.name;
         this.name = name;
     }
 
@@ -65,6 +69,13 @@ public class Product {
     }
 
     public void mergeProduct(Product other) {
+
+        if (this.name.contains(this.lastName) && (other.name.contains(this.lastName))) {
+            this.name = this.name + other.name.replace(this.lastName, "");
+        }
+        if (this.name.contains(other.lastName) && (other.name.contains(other.lastName))) {
+            this.name = this.name + other.name.replace(other.lastName, "");
+        }
         // Concatenating the names
         if (!this.name.equals(other.name)) {
             if (other.name.contains(this.name)) {
