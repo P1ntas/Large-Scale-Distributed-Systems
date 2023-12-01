@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.zeromq</groupId>
             <artifactId>jeromq</artifactId>
-            <version>0.5.3</version>
+            <version>0.5.3</version> <!-- Use the latest version available -->
         </dependency>
         <!-- Other dependencies if any -->
     </dependencies>

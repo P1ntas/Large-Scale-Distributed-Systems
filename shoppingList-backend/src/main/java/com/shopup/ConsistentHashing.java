@@ -5,40 +5,73 @@ import java.security.NoSuchAlgorithmException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 public class ConsistentHashing {
-    private final SortedMap<Integer, String> ring;
-    private final int n_virtulisation, n_replicas;
+    private final int n_virtulisation;
     private final MessageDigest md;
 
-    public ConsistentHashing(int numberOfReplicas, int n_virtulisation) throws NoSuchAlgorithmException {
-        this.ring = new TreeMap<>();
-        this.n_replicas = numberOfReplicas;
+    public ConsistentHashing(int n_virtulisation) throws NoSuchAlgorithmException {
         this.n_virtulisation = n_virtulisation;
         this.md = MessageDigest.getInstance("MD5");
     }
 
-    public void addServer(String server) {
-        for (int i = 0; i<this.n_virtulisation; i++){
+    public void addServer(String server, TreeMap<Integer, String> ring) {
+
+        for (int i = 0; i < n_virtulisation; i++) {
+            //! eventualmente usar um valor random ou uma funcao de has diferente para cada virtual node
             int hash = getHash(server + i);
-            this.ring.put(hash, server);
+            ring.put(hash, server);
         }
-
+        System.out.println("ADDING SERVER " + server);
+        
+        System.out.println("RING UPDATED + : " + ring);
     }
 
-    public void removeServer(String server) {
+    public void removeServer(String server, TreeMap<Integer, String> ring) {
         int hash = getHash(server);
-        this.ring.remove(hash);
+        ring.remove(hash);
+
+        System.out.println("RING UPDATED - : " + ring);
     }
 
-    public String getServer(Object key) {
-        if (this.ring.isEmpty()) {
+    public String getServer(Object key, TreeMap<Integer, String> ring) {
+        System.out.println("GETTING SERVER FOR KEY: " + key);
+        if (ring.isEmpty()) {
+            System.out.println("SERVER RING IS EMPTY, RETURNING NULL");
             return null;
         }
         int hash = getHash(key);
-        if (!this.ring.containsKey(hash)) {
-            SortedMap<Integer, String> tailMap = this.ring.tailMap(hash);
-            hash = tailMap.isEmpty() ? this.ring.firstKey() : tailMap.firstKey();
+        if (!ring.containsKey(hash)) {
+            System.out.println("SERVER NOT IN THE RING, RETURNING NULL");
+            return null;
         }
-        return this.ring.get(hash);
+        System.out.println("SERVER FOUND, RETURNING SERVER");
+        return ring.get(hash);
+    }
+
+    public String getServerAfter(Object key, TreeMap<Integer, String> ring, boolean isServer) {
+        
+        if(ring.isEmpty()){
+            System.out.println("RING IS EMPTY, RETURNING NULL");
+            return null;
+        }
+        System.out.println("SEARCHING FOR SERVER");
+        int hash = getHash(key);
+        SortedMap<Integer, String> tailMap;
+        if(isServer){
+            tailMap = ring.tailMap(hash + 1);
+        }
+        else{
+            tailMap = ring.tailMap(hash);
+        }
+
+        if (!tailMap.isEmpty()) {
+            System.out.println("FOUND SERVER: " + tailMap.get(tailMap.firstKey()));
+            return tailMap.get(tailMap.firstKey());
+        }
+        else if(isServer && ring.size() == 1 && ring.containsKey(hash)){
+            System.out.println("SERVER IS THE ONLY NODE IN THE RING, RETURNING NULL")
+            return null;
+        }
+        return ring.get(ring.firstKey());
     }
 
     private int getHash(Object key) {
