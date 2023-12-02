@@ -1,10 +1,11 @@
+package com.shopup;
+
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.TreeMap;
-import com.shopup.ConsistentHashing;
 import org.zeromq.SocketType;
 
 public class Broker {
@@ -18,7 +19,7 @@ public class Broker {
         this.consistentHashing = new ConsistentHashing(1);
         this.context = new ZContext();
         this.socket = context.createSocket(SocketType.REP);
-        this.socket.bind("127.0.0.1:5000");
+        this.socket.bind("tcp://127.0.0.1:5000");
         this.ring = new TreeMap<>();
     }
 

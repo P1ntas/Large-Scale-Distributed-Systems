@@ -14,10 +14,11 @@ public class ConsistentHashing {
     }
 
     public void addServer(String server, TreeMap<Integer, String> ring) {
-
-        for (int i = 0; i < n_virtulisation; i++) {
+        int hash = getHash(server);
+        ring.put(hash, server);
+        for (int i = 1; i < n_virtulisation; i++) {
             //! eventualmente usar um valor random ou uma funcao de has diferente para cada virtual node
-            int hash = getHash(server + i);
+            hash = getHash(server + i);
             ring.put(hash, server);
         }
         System.out.println("ADDING SERVER " + server);
@@ -48,7 +49,8 @@ public class ConsistentHashing {
     }
 
     public String getServerAfter(Object key, TreeMap<Integer, String> ring, boolean isServer) {
-        
+        int random1 = getHash(key);
+        int random2 = getHash(key);
         if(ring.isEmpty()){
             System.out.println("RING IS EMPTY, RETURNING NULL");
             return null;
@@ -68,7 +70,7 @@ public class ConsistentHashing {
             return tailMap.get(tailMap.firstKey());
         }
         else if(isServer && ring.size() == 1 && ring.containsKey(hash)){
-            System.out.println("SERVER IS THE ONLY NODE IN THE RING, RETURNING NULL")
+            System.out.println("SERVER IS THE ONLY NODE IN THE RING, RETURNING NULL");
             return null;
         }
         return ring.get(ring.firstKey());
