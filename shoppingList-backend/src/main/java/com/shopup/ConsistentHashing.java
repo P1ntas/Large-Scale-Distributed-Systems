@@ -52,10 +52,8 @@ public class ConsistentHashing {
         int random1 = getHash(key);
         int random2 = getHash(key);
         if(ring.isEmpty()){
-            System.out.println("RING IS EMPTY, RETURNING NULL");
             return null;
         }
-        System.out.println("SEARCHING FOR SERVER");
         int hash = getHash(key);
         SortedMap<Integer, String> tailMap;
         if(isServer){
@@ -66,11 +64,9 @@ public class ConsistentHashing {
         }
 
         if (!tailMap.isEmpty()) {
-            System.out.println("FOUND SERVER: " + tailMap.get(tailMap.firstKey()));
             return tailMap.get(tailMap.firstKey());
         }
         else if(isServer && ring.size() == 1 && ring.containsKey(hash)){
-            System.out.println("SERVER IS THE ONLY NODE IN THE RING, RETURNING NULL");
             return null;
         }
         return ring.get(ring.firstKey());
