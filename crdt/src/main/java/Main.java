@@ -7,7 +7,8 @@ public class Main {
         System.out.println("Hello world!");
 
         DataStorage test = new DataStorage();
-        System.out.println("First element: " + test.getUser());
+        System.out.println("Shopping List: " + test.getShoppingList());
+        System.out.println("User: " + test.getUser());
 
         //Interface gui = new Interface();
     }

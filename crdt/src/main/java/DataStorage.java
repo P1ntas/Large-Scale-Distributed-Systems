@@ -8,20 +8,20 @@ import org.example.JSONReader;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataStorage{
 
     JSONReader reader;
 
-    List<ShoppingList> lists;
-    List<User> users;
+    Map<User, List<ShoppingList>> user_lists;
 
     public DataStorage(){
 
         this.reader = new JSONReader();
-        this.lists = new ArrayList<>();
-        this.users = new ArrayList<>();
+        this.user_lists = new HashMap<>();
 
         for (JSONObject jsonObject : reader.getFiles()) {
             processJSONObject(jsonObject);
@@ -30,18 +30,24 @@ public class DataStorage{
     }
 
     public String getUser(){
-        return users.get(1).getUsername();
+        return user_lists.keySet().iterator().next().getUsername();
+    }
+
+    public String getShoppingList(){
+        return user_lists.get(user_lists.keySet().iterator().next()).get(0).getName();
     }
 
     private void processJSONObject(JSONObject jsonObject) {
         for (Object userKey : jsonObject.keySet()) {
             
             User newUser = new User(userKey.toString());
-            users.add(newUser);
+            
 
             JSONObject userObject = (JSONObject) jsonObject.get(userKey);
 
             JSONArray shoppingListArray = (JSONArray) userObject.get("shopping_lists");
+
+            List<ShoppingList> newList = new ArrayList<>(); 
 
             for (Object shoppingListObject : shoppingListArray) {
                 JSONObject listObject = (JSONObject) shoppingListObject;
@@ -62,8 +68,11 @@ public class DataStorage{
 
                 }
 
-                lists.add(newShoppingList);
+                newList.add(newShoppingList);
             }
+
+            user_lists.put(newUser, newList);
+
         }
     }
 
