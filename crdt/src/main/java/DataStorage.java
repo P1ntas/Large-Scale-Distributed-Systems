@@ -12,6 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
+import java.util.UUID;
+
 public class DataStorage{
 
     JSONReader reader;
@@ -74,11 +79,68 @@ public class DataStorage{
             user_lists.put(newUser, newList);
 
         }
+        
+
+        }
+        
+            
+    public void convertToJSON(){
+
+        for(User key: user_lists.keySet()){
+
+            JSONObject user = new JSONObject();
+            JSONArray shopping_lists = new JSONArray();
+
+            for(ShoppingList list: user_lists.get(key)){
+
+                JSONObject shoppingList = new JSONObject();
+                shoppingList.put("list_name", list.getName());
+                shoppingList.put("last_edited", "2023-11-12T12:00:00Z");
+
+                JSONArray products = new JSONArray();
+
+                HashMap<UUID, Product> prod = list.getProducts();
+
+                for(UUID id: prod.keySet()){
+
+                    JSONObject product = new JSONObject();
+                    product.put("name", prod.get(id).getName());
+                    product.put("quantity", prod.get(id).getQuantity());
+
+                    products.add(product);
+
+                }
+
+                shoppingList.put("products", products);
+                shopping_lists.add(shoppingList);
+
+            }
+
+            JSONObject finalList = new JSONObject();
+            finalList.put("shopping_lists", shopping_lists);
+
+            user.put(key.getUsername(), shopping_lists);
+
+            try (FileWriter fileWriter = new FileWriter("src/main/resources/" + key.getId() + ".json")) {
+                fileWriter.write(user.toJSONString());
+                System.out.println("JSON file created successfully.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 
-
-
-
-
-
+    /*private String formatJsonString(String jsonString) {
+        try {
+            // Parse the input JSON string and return a formatted string
+            JSONObject jsonObject = (JSONObject) new org.json.simple.parser.JSONParser().parse(jsonString);
+            return jsonObject.toJSONString();
+        } catch (ParseException e) {
+            // Handle the parsing exception (e.g., print the error)
+            e.printStackTrace();
+            return jsonString; // Return the original string if parsing fails
+        }
+    }*/
 }

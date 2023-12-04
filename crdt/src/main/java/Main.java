@@ -10,6 +10,8 @@ public class Main {
         System.out.println("Shopping List: " + test.getShoppingList());
         System.out.println("User: " + test.getUser());
 
+        test.convertToJSON();
+
         //Interface gui = new Interface();
     }
 }
