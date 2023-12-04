@@ -6,9 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="crdt" />
-        <module name="shoppingList-backend" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="crdt" target="19" />
+      <module name="shoppingList-backend" target="19" />
+    </bytecodeTargetLevel>
   </component>
 </project>

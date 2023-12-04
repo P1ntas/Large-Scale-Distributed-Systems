@@ -107,6 +107,10 @@ public class DataStorage{
                     product.put("name", prod.get(id).getName());
                     product.put("quantity", prod.get(id).getQuantity());
 
+                    // Convert the timestamp to ISO 8601 format
+                    String lastEdited = convertTimestampToISO8601(product.getVectorClock().getTimestamp());
+                    productObject.put("last_edited", lastEdited);
+
                     products.add(product);
 
                 }
@@ -130,6 +134,61 @@ public class DataStorage{
 
         }
 
+    }
+
+    private String convertTimestampToISO8601(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(new Date(timestamp));
+    }
+
+    public void addUser(User user) {
+        users.put(user.getId(), user);
+        userLists.putIfAbsent(user, new ArrayList<>());
+    }
+
+    public void addShoppingList(UUID userId, ShoppingList shoppingList) {
+        User user = users.get(userId);
+        if (user != null) {
+            userLists.get(user).add(shoppingList);
+        }
+    }
+
+    public void saveData() {
+        for (User user : userLists.keySet()) {
+            saveUserToJson(user);
+        }
+    }
+
+    private void saveUserToJson(User user) {
+        JSONObject userObject = new JSONObject();
+        JSONArray shoppingListsArray = new JSONArray();
+
+        for (ShoppingList list : userLists.get(user)) {
+            JSONObject shoppingListObject = new JSONObject();
+            shoppingListObject.put("list_name", list.getName());
+            shoppingListObject.put("last_edited", "2023-11-12T12:00:00Z"); // Replace with actual last edited timestamp
+
+            JSONArray productsArray = new JSONArray();
+            for (Product product : list.getProducts().values()) {
+                JSONObject productObject = new JSONObject();
+                productObject.put("name", product.getName());
+                productObject.put("quantity", product.getQuantity());
+                productsArray.add(productObject);
+            }
+
+            shoppingListObject.put("products", productsArray);
+            shoppingListsArray.add(shoppingListObject);
+        }
+
+        userObject.put("shopping_lists", shoppingListsArray);
+
+        try (FileWriter file = new FileWriter(user.getId() + ".json")) {
+            file.write(userObject.toJSONString());
+            System.out.println("JSON file for user " + user.getUsername() + " created successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /*private String formatJsonString(String jsonString) {
