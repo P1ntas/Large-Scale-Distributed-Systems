@@ -30,23 +30,5 @@
                 ]
             }
         ]
-    },
-    "jane_smith": {
-        "shopping_lists": [
-            {
-                "list_name": "Party Supplies",
-                "last_edited": "2023-11-10T17:45:00Z",
-                "products": [
-                    {
-                        "name": "Balloons",
-                        "quantity": 30
-                    },
-                    {
-                        "name": "Party Hats",
-                        "quantity": 10
-                    }
-                ]
-            }
-        ]
     }
 }

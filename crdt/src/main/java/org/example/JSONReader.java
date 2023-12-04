@@ -5,29 +5,66 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JSONReader {
 
-    JSONParser parser;
-    FileReader reader;
-    JSONObject jsonObject;
+    //JSONObject jsonObject;
+    List<JSONObject> files;
 
-    public JSONReader(String filepath){
+    public JSONReader(){
 
-        try{
 
-        this.reader = new FileReader(filepath);
-        this.parser = new JSONParser();
+        this.files = readJSONFilesFromFolder("src/main/resources");
 
-        this.jsonObject = (JSONObject) parser.parse(reader);
+        //this.jsonObject = (JSONObject) parser.parse(reader);
 
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
+    }
+
+    public List<JSONObject> readJSONFilesFromFolder(String folderPath) {
+        List<JSONObject> jsonObjects = new ArrayList<>();
+
+        File folder = new File(folderPath);
+
+        if (folder.isDirectory()) {
+            File[] files = folder.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().endsWith(".json")) {
+                        try {
+                            JSONObject jsonObject = readJSONFromFile(file);
+                            jsonObjects.add(jsonObject);
+                        } catch (IOException | ParseException e) {
+                            System.err.println("Error reading JSON file: " + file.getAbsolutePath());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+        return jsonObjects;
+    }
+
+    private JSONObject readJSONFromFile(File file) throws IOException, ParseException {
+        JSONParser parser = new JSONParser();
+
+        try (FileReader reader = new FileReader(file)) {
+            return (JSONObject) parser.parse(reader);
         }
     }
 
+    public List<JSONObject> getFiles(){
+        return files;
+    }
+
+    /*
     public void info(){
         for (Object key : jsonObject.keySet()) {
             System.out.println("-------------------------------------------------------------------------------------------------");
@@ -60,57 +97,6 @@ public class JSONReader {
             System.out.println();
         }    
     }
-
-
-    /*
-    public static void main(String[] args) {
-        JSONParser parser = new JSONParser();
-
-        try {
-            // Path to your JSON file
-            FileReader reader = new FileReader("path/to/your/file.json");
-
-            // Parse the JSON file
-            Object obj = parser.parse(reader);
-
-            // Cast the parsed object to JSONObject
-            JSONObject jsonObject = (JSONObject) obj;
-
-            // Iterate over each user in the JSON
-            for (Object key : jsonObject.keySet()) {
-                String username = (String) key;
-                JSONObject userObject = (JSONObject) jsonObject.get(username);
-
-                System.out.println("User: " + username);
-
-                // Iterate over shopping lists for each user
-                JSONArray shoppingLists = (JSONArray) userObject.get("shopping_lists");
-                for (Object listObj : shoppingLists) {
-                    JSONObject list = (JSONObject) listObj;
-
-                    String listName = (String) list.get("list_name");
-                    String lastEdited = (String) list.get("last_edited");
-                    JSONArray products = (JSONArray) list.get("products");
-
-                    System.out.println("\tShopping List: " + listName);
-                    System.out.println("\tLast Edited: " + lastEdited);
-
-                    // Iterate over products in the shopping list
-                    for (Object productObj : products) {
-                        JSONObject product = (JSONObject) productObj;
-
-                        String productName = (String) product.get("name");
-                        long quantity = (long) product.get("quantity");
-
-                        System.out.println("\t\tProduct: " + productName + ", Quantity: " + quantity);
-                    }
-                }
-                System.out.println();
-            }
-
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
     */
+
 }

@@ -12,7 +12,7 @@ public class Interface{
 
 
     public Interface(){
-        this.reader = new JSONReader("src/main/resources/lists.json");
+        this.reader = new JSONReader();
 
         start();
 
@@ -21,7 +21,7 @@ public class Interface{
     //methods
 
     public void showShoppingLists(){
-        this.reader.info();
+        //this.reader.info();
     }
 
     public void mainOption(){
