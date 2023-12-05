@@ -1,6 +1,10 @@
 package org.crdt;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 class ShoppingList {
@@ -36,6 +40,11 @@ class ShoppingList {
     //setters
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonProperty("products")
+    public List<Product> getProductList() {
+        return new ArrayList<>(this.products.values());
     }
 
     public void setProducts(HashMap<UUID, Product> products) {
