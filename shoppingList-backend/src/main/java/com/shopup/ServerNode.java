@@ -5,10 +5,11 @@ import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
 import org.zeromq.ZMQ.Poller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.io.IOException;
+import java.util.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +30,8 @@ public class ServerNode {
     private final ExecutorService executorService;
 
     private final Utils utils = new Utils();
+
+    private Map<String, User> userDataStore = new HashMap<>();
     
     public ServerNode(String serverAddress, String brokerAddress) {
         this.serverAddress = serverAddress;
@@ -184,7 +187,6 @@ public class ServerNode {
 
     private void handleRepRequest(ZMsg request) {
         String header = request.popString();
-        String server = null;
         ZMsg response = new ZMsg();
         System.out.println("REP REQUEST: " + header);
         switch (header) {
@@ -192,9 +194,12 @@ public class ServerNode {
                 response.addString("PONG");
                 response.send(socket);
             }
-            default -> {
+            case "USER_DATA" -> {
+                handleUserData(request);
             }
-            //ignore
+            default -> {
+                // ignore
+            }
         }
     }
 
@@ -218,6 +223,19 @@ public class ServerNode {
             //ignore
         }
     }
+
+    private void handleUserData(ZMsg request) {
+        String jsonData = request.popString();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            User user = mapper.readValue(jsonData, User.class);
+            userDataStore.put(user.getUsername(), user);
+            System.out.println("User data received and stored for user: " + user.getUsername());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     
     public static void main(String[] args) {
         String serverAddress;
