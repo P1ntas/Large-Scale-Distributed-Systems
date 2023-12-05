@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class JSONHandler {
-    private static final String DEFAULT_FILE_NAME = "data/test.json";
+    private static final String DEFAULT_FILE_NAME = "src/main/resources/test.json";
 
     public static Map<String, User> readFromJSON(String fileName) throws IOException {
         if (fileName == null || fileName.isEmpty()) {
@@ -67,14 +67,14 @@ public class JSONHandler {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        String fileName = "data/" + user.getUsername() + ".json";
+        String fileName = "src/main/resources/" + user.getUsername() + ".json";
         mapper.writeValue(new File(fileName), user);
     }
 
     // Example usage
     public static void main(String[] args) {
         try {
-            Map<String, User> users = readFromJSON("data/test.json");
+            Map<String, User> users = readFromJSON("");
             if (!users.isEmpty()) {
                 User user = users.values().iterator().next(); // Getting the first user
                 writeToJSON(user);
