@@ -1,6 +1,6 @@
-package org.example;
+package org.gui;
 
-import org.example.JSONReader;
+import org.gui.JSONReader;
 
 import java.util.Scanner;
 
@@ -50,8 +50,6 @@ public class Interface{
                 break;
             }
         }
-
     }
-
 
 }

@@ -1,3 +1,5 @@
+package org.crdt;
+
 import java.util.UUID;
 
 public class Product {
@@ -12,6 +14,22 @@ public class Product {
         this.name = name;
         this.quantity = 1;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
+        this.lastName = "";
+    }
+
+    public Product(String name, UUID id, int quantity) {
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
+        this.lastName = "";
+    }
+
+    public Product(String name, UUID id, int quantity, long timestamp) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.quantity = quantity;
+        this.vectorClock = new VectorClock(this.id, timestamp);
         this.lastName = "";
     }
 

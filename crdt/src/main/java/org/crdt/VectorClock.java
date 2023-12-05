@@ -1,3 +1,5 @@
+package org.crdt;
+
 import java.util.UUID;
 
 class VectorClock {

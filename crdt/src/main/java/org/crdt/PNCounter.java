@@ -1,3 +1,5 @@
+package org.crdt;
+
 public class PNCounter {
     GCounter positiveGCounter;
     GCounter negativeGCounter;
@@ -5,6 +7,22 @@ public class PNCounter {
     public PNCounter() {
         this.positiveGCounter = new GCounter();
         this.negativeGCounter = new GCounter();
+    }
+
+    public GCounter getPositiveGCounter(){
+        return this.positiveGCounter;
+    }
+
+    public GCounter getNegativeGCounter(){
+        return this.negativeGCounter;
+    }
+
+    public GCounter setPositiveGCounter(GCounter positiveGCounter){
+        return this.positiveGCounter = positiveGCounter;
+    }
+
+    public GCounter setNegativeGCounter(GCounter negativeGCounter){
+        return this.negativeGCounter = negativeGCounter;
     }
 
     public void increment(){

@@ -1,3 +1,5 @@
+package org.crdt;
+
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -11,6 +13,12 @@ class ShoppingList {
         this.id = UUID.randomUUID();
         this.name = name;
         this.products = new HashMap<>();
+    }
+
+    public ShoppingList(String name, UUID id, HashMap<UUID, Product> products) {
+        this.id = id;
+        this.name = name;
+        this.products = products;
     }
 
     public UUID getId() {

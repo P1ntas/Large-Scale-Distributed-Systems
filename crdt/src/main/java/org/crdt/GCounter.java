@@ -1,4 +1,4 @@
-import java.util.UUID;
+package org.crdt;
 
 public class GCounter {
     int counter;

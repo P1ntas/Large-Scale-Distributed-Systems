@@ -1,0 +1,62 @@
+{
+  "username" : "john_doe",
+  "id" : "fafd2105-86ef-4653-9915-8960ccb09a68",
+  "shoppingLists" : {
+    "f81f9cfb-219d-44d5-87d0-53a99e28e03f" : {
+      "id" : "f81f9cfb-219d-44d5-87d0-53a99e28e03f",
+      "name" : "Hardware",
+      "products" : {
+        "4db637b8-1f93-44ea-81fd-8fb812cb2859" : {
+          "id" : "4db637b8-1f93-44ea-81fd-8fb812cb2859",
+          "name" : "Nails",
+          "quantity" : 100,
+          "vectorClock" : {
+            "id" : "4db637b8-1f93-44ea-81fd-8fb812cb2859",
+            "timestamp" : 1699889400000
+          }
+        },
+        "df0a3bc1-f047-4f37-af5c-36b392f03676" : {
+          "id" : "df0a3bc1-f047-4f37-af5c-36b392f03676",
+          "name" : "Hammer",
+          "quantity" : 1,
+          "vectorClock" : {
+            "id" : "df0a3bc1-f047-4f37-af5c-36b392f03676",
+            "timestamp" : 1699889400000
+          }
+        }
+      }
+    },
+    "6b849aa1-5047-4e2f-957a-38b09bd20722" : {
+      "id" : "6b849aa1-5047-4e2f-957a-38b09bd20722",
+      "name" : "Groceries",
+      "products" : {
+        "b0574850-dc25-41a4-8e49-98cce5fc568e" : {
+          "id" : "b0574850-dc25-41a4-8e49-98cce5fc568e",
+          "name" : "Bread",
+          "quantity" : 1,
+          "vectorClock" : {
+            "id" : "b0574850-dc25-41a4-8e49-98cce5fc568e",
+            "timestamp" : 1699889400000
+          }
+        },
+        "c39143eb-c22e-479d-8992-dd792409fa62" : {
+          "id" : "c39143eb-c22e-479d-8992-dd792409fa62",
+          "name" : "Milk",
+          "quantity" : 2,
+          "vectorClock" : {
+            "id" : "c39143eb-c22e-479d-8992-dd792409fa62",
+            "timestamp" : 1699889400000
+          }
+        }
+      }
+    }
+  },
+  "counter" : {
+    "positiveGCounter" : {
+      "counter" : 0
+    },
+    "negativeGCounter" : {
+      "counter" : 0
+    }
+  }
+}
