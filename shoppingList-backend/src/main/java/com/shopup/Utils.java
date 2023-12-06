@@ -25,26 +25,30 @@ class Utils {
         return map;
     }
 
-    public static String mergeNames(String s1, String s2) {
-        if (s1.equals(s2)) {
-            return s1;
+    public static String mergeNames(String str1, String str2) {
+        // If both strings are the same, return the first string
+        if (str1.equals(str2)) {
+            return str1;
         }
 
-        // Find the longest significant overlap
-        String overlap = findLongestOverlap(s1, s2);
-        if (overlap.length() >= 4) {
-            return s1 + s2.substring(overlap.length());
-        }
+        // Identify the shorter and longer string
+        String shorter = str1.length() < str2.length() ? str1 : str2;
+        String longer = str1.length() < str2.length() ? str2 : str1;
 
-        return s1 + s2;
-    }
-
-    private static String findLongestOverlap(String s1, String s2) {
-        for (int i = Math.min(s1.length(), s2.length()); i >= 4; i--) {
-            if (s1.endsWith(s2.substring(0, i))) {
-                return s2.substring(0, i);
+        // Start checking for substrings
+        for (int length = shorter.length(); length >= 4; length--) {
+            for (int start = 0; start <= shorter.length() - length; start++) {
+                String subStr = shorter.substring(start, start + length);
+                if (longer.contains(subStr)) {
+                    // Remove the matched substring from the shorter string
+                    String remaining = shorter.replace(subStr, "");
+                    // Concatenate the remaining part with the longer string
+                    return longer + remaining;
+                }
             }
         }
-        return "";
+
+        // If the substring length is less than 4, return the concatenation of both strings
+        return str1 + str2;
     }
 }
