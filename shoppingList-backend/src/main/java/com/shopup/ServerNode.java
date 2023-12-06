@@ -64,6 +64,18 @@ public class ServerNode {
         executorService.submit(this::checkNeighbourHeatbeat);
         executorService.submit(this::listenForMessages);
     }
+
+    public ConsistentHashing getConsistentHashing() {
+        return this.consistentHashing;
+    }
+
+    public TreeMap<Integer,String> getRing() {
+        return this.ring;
+    }
+
+    public String getServerAddress() {
+        return this.serverAddress;
+    }
     
     private void checkNeighbourHeatbeat() {
         int failedPings = 0;

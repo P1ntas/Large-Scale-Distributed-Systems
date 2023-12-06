@@ -1,5 +1,8 @@
 package com.shopup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class Product {
@@ -39,6 +42,17 @@ public class Product {
         this.quantity = quantity;
         this.vectorClock = vectorClock;
         this.lastName = "";
+    }
+
+    @JsonCreator
+    public Product(@JsonProperty("name") String name,
+                   @JsonProperty("id") UUID id,
+                   @JsonProperty("quantity") int quantity,
+                   @JsonProperty("vectorClock") VectorClock vectorClock) {
+        this.name = name;
+        this.id = id != null ? id : UUID.randomUUID();
+        this.quantity = quantity;
+        this.vectorClock = vectorClock;
     }
 
     public UUID getId() {

@@ -74,14 +74,11 @@ public class JSONHandler {
         mapper.writeValue(new File(fileName), user);
     }
 
-    public static void distributeUserData(Map<String, User> users, ConsistentHashing hashing, TreeMap<Integer, String> ring) throws JsonProcessingException {
+    public static void distributeUserData(Map<String, User> users, String serverAddress, TreeMap<Integer, String> ring) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        ZContext context = new ZContext();
-
-        users.forEach((username, user) -> {
-            String serverAddress = hashing.getServer(username, ring);
-            if (serverAddress != null) {
-                try (ZMQ.Socket socket = context.createSocket(SocketType.REQ)) {
+        try (ZContext context = new ZContext()) {
+            users.forEach((username, user) -> {
+                try (ZMQ.Socket socket = context.createSocket(ZMQ.REQ)) {
                     socket.connect(serverAddress);
                     String jsonData = mapper.writeValueAsString(user);
                     ZMsg msg = new ZMsg();
@@ -94,8 +91,8 @@ public class JSONHandler {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-        });
+            });
+        }
     }
 
     // Example usage

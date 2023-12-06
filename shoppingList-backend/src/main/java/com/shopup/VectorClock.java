@@ -1,13 +1,17 @@
 package com.shopup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 class VectorClock {
     private UUID id;
     private long timestamp;
 
-    public VectorClock(UUID id, long timestamp) {
-
+    @JsonCreator
+    public VectorClock(@JsonProperty("id") UUID id,
+                       @JsonProperty("timestamp") long timestamp) {
         this.id = id;
         this.timestamp = timestamp;
     }

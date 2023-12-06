@@ -1,5 +1,6 @@
 package com.shopup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -23,6 +24,20 @@ class ShoppingList {
         this.id = id;
         this.name = name;
         this.products = products;
+    }
+
+    @JsonCreator
+    public ShoppingList(@JsonProperty("name") String name,
+                        @JsonProperty("id") UUID id,
+                        @JsonProperty("products") List<Product> productList) {
+        this.name = name;
+        this.id = id;
+        this.products = new HashMap<>();
+        if (productList != null) {
+            for (Product product : productList) {
+                this.products.put(product.getId(), product);
+            }
+        }
     }
 
     public UUID getId() {

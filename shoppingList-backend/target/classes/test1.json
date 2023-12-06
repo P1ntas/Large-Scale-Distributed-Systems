@@ -1,0 +1,43 @@
+{
+  "alice_smith": {
+    "id": "4e2d9b2f-8327-4f8b-bf0e-3e4b5f8b7a92",
+    "shopping_lists": [
+      {
+        "list_name": "Weekly Essentials",
+        "id": "a9f4c8d2-57a0-4d58-8146-3b3f2e3e4c5f",
+        "products": [
+          {
+            "name": "Apples",
+            "id": "34fd9e2e-8e64-4b0f-8b2d-ef2d9b7bb68a",
+            "quantity": 5,
+            "last_edited": "2023-12-01T10:20:00Z"
+          },
+          {
+            "name": "Pasta",
+            "id": "e66f3e31-4b88-4a3d-82c5-73c6f3b14679",
+            "quantity": 3,
+            "last_edited": "2023-12-01T10:20:00Z"
+          }
+        ]
+      },
+      {
+        "list_name": "Office Supplies",
+        "id": "7f8324a6-08b4-4ed9-bd1c-656f89f6de5f",
+        "products": [
+          {
+            "name": "Printer Paper",
+            "id": "d1a3f2c3-12b5-4fcd-a8b6-2d5c34f1c4ab",
+            "quantity": 500,
+            "last_edited": "2023-12-01T10:20:00Z"
+          },
+          {
+            "name": "Stapler",
+            "id": "9b8f5e3b-3a5e-441f-9b5e-1eb5b3f3a1a1",
+            "quantity": 1,
+            "last_edited": "2023-12-01T10:20:00Z"
+          }
+        ]
+      }
+    ]
+  }
+}
