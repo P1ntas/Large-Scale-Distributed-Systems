@@ -9,12 +9,15 @@ public class Product {
     VectorClock vectorClock;
     String lastName;
 
+    PNCounter counter;
+
     public Product(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.quantity = 1;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
         this.lastName = "";
+        this.counter = new PNCounter();
     }
 
     public Product(String name, UUID id, int quantity) {
@@ -23,14 +26,16 @@ public class Product {
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
         this.lastName = "";
+        this.counter = new PNCounter();
     }
 
     public Product(String name, UUID id, int quantity, long timestamp) {
-        this.id = UUID.randomUUID();
+        this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, timestamp);
         this.lastName = "";
+        this.counter = new PNCounter();
     }
 
     public Product(String name, int quantity, VectorClock vectorClock) {
@@ -39,6 +44,7 @@ public class Product {
         this.quantity = quantity;
         this.vectorClock = vectorClock;
         this.lastName = "";
+        this.counter = new PNCounter();
     }
 
     public UUID getId() {
@@ -114,5 +120,13 @@ public class Product {
 
         // Merge the vector clocks
         this.vectorClock.merge(other.vectorClock);
+    }
+
+    public PNCounter getCounter() {
+        return this.counter;
+    }
+
+    public void setPNCounter(PNCounter counter) {
+        this.counter = counter;
     }
 }

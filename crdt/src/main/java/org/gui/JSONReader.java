@@ -19,9 +19,7 @@ public class JSONReader {
 
     public JSONReader(){
 
-
-        this.files = readJSONFilesFromFolder("src/main/resources");
-
+        this.files = readJSONFilesFromFolder("./crdt/src/main/resources");
         //this.jsonObject = (JSONObject) parser.parse(reader);
 
     }
@@ -33,7 +31,6 @@ public class JSONReader {
 
         if (folder.isDirectory()) {
             File[] files = folder.listFiles();
-
             if (files != null) {
                 for (File file : files) {
                     if (file.isFile() && file.getName().endsWith(".json")) {
@@ -47,6 +44,8 @@ public class JSONReader {
                     }
                 }
             }
+        }else{
+            System.err.println("Error finding json directory");
         }
 
         return jsonObjects;
