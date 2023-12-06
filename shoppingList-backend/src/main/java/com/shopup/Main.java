@@ -1,7 +1,5 @@
 package com.shopup;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -24,10 +22,10 @@ public class Main {
             node.start();
 
             // Read user data from JSON
-            Map<String, User> users = JSONHandler.readFromJSON("");
+            User user = JSONHandler.readFromJSON("");
 
             // Distribute user data across server nodes
-            JSONHandler.distributeUserData(users, node.getServerAddress(), node.getRing()); // Assuming you have consistentHashing and ring instances
+            JSONHandler.distributeUserData(user, node.getServerAddress(), node.getRing()); // Assuming you have consistentHashing and ring instances
 
         } catch (Exception e) {
             e.printStackTrace();

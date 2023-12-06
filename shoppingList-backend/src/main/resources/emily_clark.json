@@ -1,0 +1,53 @@
+{
+  "username" : "emily_clark",
+  "id" : "9d24f0c9-123b-4de5-bb8e-e14f8f14c912",
+  "shoppingLists" : [ {
+    "name" : "Office Supplies",
+    "id" : "4b5e8e29-fc39-4410-a8b4-54f3d2f3e730",
+    "products" : [ {
+      "name" : "Notebooks",
+      "id" : "b123f456-7891-23d4-56e7-890f1a2b3456",
+      "quantity" : 5,
+      "vectorClock" : {
+        "id" : "b123f456-7891-23d4-56e7-890f1a2b3456",
+        "timestamp" : 1700005600000
+      }
+    }, {
+      "name" : "Pens",
+      "id" : "a1e2f3d4-c5b6-7890-1234-56d78e90f12a",
+      "quantity" : 20,
+      "vectorClock" : {
+        "id" : "a1e2f3d4-c5b6-7890-1234-56d78e90f12a",
+        "timestamp" : 1700005600000
+      }
+    } ]
+  }, {
+    "name" : "Pet Supplies",
+    "id" : "8e9f6d71-2b1a-4d89-9c2d-a71b3e8e7f89",
+    "products" : [ {
+      "name" : "Dog Food",
+      "id" : "d5e6f790-1234-5678-9abc-def012345678",
+      "quantity" : 10,
+      "vectorClock" : {
+        "id" : "d5e6f790-1234-5678-9abc-def012345678",
+        "timestamp" : 1700005600000
+      }
+    }, {
+      "name" : "Cat Litter",
+      "id" : "4c5b6a7d-8e9f-0123-4567-89abcdef0123",
+      "quantity" : 2,
+      "vectorClock" : {
+        "id" : "4c5b6a7d-8e9f-0123-4567-89abcdef0123",
+        "timestamp" : 1700005600000
+      }
+    } ]
+  } ],
+  "counter" : {
+    "positiveGCounter" : {
+      "counter" : 5
+    },
+    "negativeGCounter" : {
+      "counter" : 1
+    }
+  }
+}

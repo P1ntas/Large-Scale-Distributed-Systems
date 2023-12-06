@@ -1,25 +1,21 @@
 package com.shopup;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
-import org.zeromq.SocketType;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.*;
 
 public class JSONHandler {
-    private static final String DEFAULT_FILE_NAME = "src/main/resources/test.json";
+    private static final String DEFAULT_FILE_NAME = "src/main/resources/john_doe.json";
 
-    public static Map<String, User> readFromJSON(String fileName) throws IOException {
+    /*public static Map<String, User> readFromJSON(String fileName) throws IOException {
         if (fileName == null || fileName.isEmpty()) {
             fileName = DEFAULT_FILE_NAME;
         }
@@ -64,6 +60,22 @@ public class JSONHandler {
         });
 
         return users;
+    }*/
+
+    public static User readFromJSON(String fileName) throws IOException {
+        if (fileName == null || fileName.isEmpty()) {
+            fileName = DEFAULT_FILE_NAME;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        File file = new File(fileName);
+        User user = mapper.readValue(file, User.class);
+
+        // Assuming User class has fields: username, id, shoppingLists, and counter
+        // and these fields have proper getters/setters
+
+        return user;
     }
 
     public static void writeToJSON(User user) throws IOException {
@@ -74,35 +86,32 @@ public class JSONHandler {
         mapper.writeValue(new File(fileName), user);
     }
 
-    public static void distributeUserData(Map<String, User> users, String serverAddress, TreeMap<Integer, String> ring) throws JsonProcessingException {
+    public static void distributeUserData(User user, String serverAddress, TreeMap<Integer, String> ring) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         try (ZContext context = new ZContext()) {
-            users.forEach((username, user) -> {
-                try (ZMQ.Socket socket = context.createSocket(ZMQ.REQ)) {
-                    socket.connect(serverAddress);
-                    String jsonData = mapper.writeValueAsString(user);
-                    ZMsg msg = new ZMsg();
-                    msg.addString("USER_DATA");
-                    msg.addString(jsonData);
-                    msg.send(socket);
+            try (ZMQ.Socket socket = context.createSocket(ZMQ.REQ)) {
+                socket.connect(serverAddress);
+                String jsonData = mapper.writeValueAsString(user);
+                ZMsg msg = new ZMsg();
+                msg.addString("USER_DATA");
+                msg.addString(jsonData);
+                msg.send(socket);
 
-                    // Await response or confirmation, if necessary
-                    // ZMsg response = ZMsg.recvMsg(socket);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+                // Await response or confirmation, if necessary
+                // ZMsg response = ZMsg.recvMsg(socket);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     // Example usage
     public static void main(String[] args) {
         try {
-            Map<String, User> users = readFromJSON("");
-            if (!users.isEmpty()) {
-                User user = users.values().iterator().next(); // Getting the first user
-                writeToJSON(user);
-            }
+            User user = readFromJSON("");
+            User user1 = readFromJSON("src/main/resources/emily_clark.json");
+            writeToJSON(user);
+            writeToJSON(user1);
         } catch (IOException e) {
             e.printStackTrace();
         }
