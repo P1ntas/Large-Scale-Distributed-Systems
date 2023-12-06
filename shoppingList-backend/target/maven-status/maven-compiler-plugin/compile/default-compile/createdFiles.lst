@@ -1,6 +1,13 @@
-com/shopup/Broker$1.class
-com/shopup/ConsistentHashing.class
-com/shopup/Utils.class
+com/shopup/VectorClock.class
 com/shopup/ServerNode.class
+com/shopup/JSONHandler.class
+com/shopup/Utils.class
 com/shopup/Broker.class
+com/shopup/ShoppingList.class
+com/shopup/Product.class
+com/shopup/ConsistentHashing.class
+com/shopup/GCounter.class
+com/shopup/User.class
+com/shopup/PNCounter.class
+com/shopup/JSONHandler$1.class
 com/shopup/Main.class
