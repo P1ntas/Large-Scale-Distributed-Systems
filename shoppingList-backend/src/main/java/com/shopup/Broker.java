@@ -13,68 +13,53 @@ public class Broker {
 
     private ConsistentHashing consistentHashing;
     private ZContext context;
-    private ZMQ.Socket repSocket; // REP socket for "JOIN" requests
-    private ZMQ.Socket pullSocket; // PULL socket for "REMOVE" requests
+    private ZMQ.Socket serverRoutSocket; // REP socket for "JOIN" requests
     private TreeMap<Integer, String> ring;
 
     public Broker() throws NoSuchAlgorithmException {
         this.consistentHashing = new ConsistentHashing(1);
         this.context = new ZContext();
-        this.repSocket = context.createSocket(SocketType.REP);
-        this.repSocket.bind("tcp://127.0.0.1:5000");
-        this.pullSocket = context.createSocket(SocketType.PULL);
-        this.pullSocket.bind("tcp://127.0.0.1:5001");
+
+        this.serverRoutSocket = context.createSocket(SocketType.ROUTER);
+        this.serverRoutSocket.bind("tcp://127.0.0.1:5000");
+
         this.ring = new TreeMap<>();
     }
 
     public void start() {
-        Poller poller = context.createPoller(2);
-        poller.register(repSocket, Poller.POLLIN);
-        poller.register(pullSocket, Poller.POLLIN);
+        System.out.println("BROKER STARTED");
+        Poller poller = context.createPoller(1); //! LATEr ADD ROUTER CLIENT
+        poller.register(serverRoutSocket, Poller.POLLIN);
 
         while (!Thread.currentThread().isInterrupted()) {
-            poller.poll(); // Wait for an event on either socket
+            poller.poll();
 
-            if (poller.pollin(0)) { // Check REP socket
-                ZMsg repRequest = ZMsg.recvMsg(repSocket);
-                if (repRequest != null) {
-                    handleRepRequest(repRequest);
-                }
-            }
-
-            if (poller.pollin(1)) { // Check PULL socket
-                ZMsg pullRequest = ZMsg.recvMsg(pullSocket);
-                if (pullRequest != null) {
-                    handlePullRequest(pullRequest);
+            if (poller.pollin(0)) { 
+                ZMsg serverRoutReq = ZMsg.recvMsg(serverRoutSocket);
+                if (serverRoutReq != null) {
+                    handleServerRoutRequest(serverRoutReq);
                 }
             }
         }
     }
 
-    private void handleRepRequest(ZMsg request) {
+    private void handleServerRoutRequest(ZMsg request) {
+        System.out.println("REQUEST: " + request);
+        String dealerIdentity = request.popString();
         String header = request.popString();
         String server = null;
         ZMsg response = new ZMsg();
-        System.out.println("REQUEST: " + request);
+        System.out.println("identity: " + dealerIdentity);
+        response.addString(dealerIdentity);
+
         switch (header) {
             case "JOIN" -> {
-                System.out.println("SERVER JOINED: " + ring);
                 server = request.popString();
                 consistentHashing.addServer(server, ring);
                 response.addString(ring.toString());
-                response.send(repSocket);
+                System.out.println("RESPONSE SENT: " + response);
+                response.send(serverRoutSocket);
             }
-            default -> {
-            }
-            //ignore
-        }
-    }
-
-    private void handlePullRequest(ZMsg request) {
-        String header = request.popString();
-        String server = null;
-        System.out.println("REQUEST: " + request);
-        switch (header) {
             case "REMOVE" -> {
                 System.out.println("SERVER REMOVED: " + ring);
                 server = request.popString();
@@ -85,6 +70,7 @@ public class Broker {
             //ignore
         }
     }
+
 
     public static void main(String[] args) {
         try {

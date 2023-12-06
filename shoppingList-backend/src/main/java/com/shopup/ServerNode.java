@@ -19,10 +19,10 @@ import org.zeromq.SocketType;
 public class ServerNode {
     private final String serverAddress;
     private final ZContext context;
+
     private final ZMQ.Socket socket;
-    private final ZMQ.Socket pullSocket;
-    private final ZMQ.Socket outgoingSocket;
-    private final ZMQ.Socket pushSocket;
+    private final ZMQ.Socket dealerSocket;
+
     private final ConsistentHashing consistentHashing;
     private TreeMap<Integer,String> ring;
     private final String brokerAddress;
@@ -36,16 +36,13 @@ public class ServerNode {
 
         this.context = new ZContext();
 
+        this.dealerSocket = context.createSocket(SocketType.DEALER);
+        this.dealerSocket.bind(serverAddress.substring(0, serverAddress.length() - 1) + "1");
+
         this.socket = context.createSocket(SocketType.REP);
         this.socket.bind(serverAddress);
-        this.pullSocket = context.createSocket(SocketType.PULL);
-        this.pullSocket.bind(serverAddress.substring(0, serverAddress.length() - 1) + "1");// port + 1 ()
-        this.outgoingSocket = context.createSocket(SocketType.REQ);
-        this.outgoingSocket.connect(brokerAddress);
-        this.pushSocket = context.createSocket(SocketType.PUSH);
-        this.pushSocket.connect(brokerAddress.substring(0, brokerAddress.length() - 1) + "1"); // port + 1 ()
+
         System.out.println("server address: " + serverAddress);
-        System.out.println("PULL SOCKET: " + serverAddress.substring(0, serverAddress.length() - 1) + "1");
         this.ring = null;
         this.executorService = Executors.newFixedThreadPool(2);
 
@@ -60,6 +57,7 @@ public class ServerNode {
         joinRing();
         executorService.submit(this::checkNeighbourHeatbeat);
         executorService.submit(this::listenForMessages);
+
     }
     
     private void checkNeighbourHeatbeat() {
@@ -97,7 +95,6 @@ public class ServerNode {
             pingSocket.setReceiveTimeOut(1000);
 
             String response = pingSocket.recvStr();
-            System.out.println(response);
             return "PONG".equals(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,23 +105,29 @@ public class ServerNode {
 
     private void removeDeadNeighbour(String deadNeighbourAddress){
         consistentHashing.removeServer(deadNeighbourAddress, ring);
-    
-        for(String nodeAddress : this.ring.values()){
-            if(!Objects.equals(nodeAddress, this.serverAddress)){
-                try (ZMQ.Socket msgSocket = context.createSocket(SocketType.PUSH)) {
-                    msgSocket.connect(nodeAddress.substring(0, nodeAddress.length() - 1) + "1"); //connect to server's pull socket
-                    ZMsg serverMsg = new ZMsg();
-                    serverMsg.addString("REMOVE");
-                    serverMsg.addString(deadNeighbourAddress);
-                    serverMsg.send(msgSocket);
-                }
+
+        for (String nodeAddress : this.ring.values()) {
+            if (!Objects.equals(nodeAddress, this.serverAddress)) {
+                ZMQ.Socket nodeDealerSocket = context.createSocket(SocketType.DEALER);
+                ZMsg msg = new ZMsg();
+                msg.addString("REMOVE");
+                msg.addString(deadNeighbourAddress);
+                String addr = nodeAddress.substring(0, nodeAddress.length() - 1) + "1";
+                nodeDealerSocket.connect(addr);
+                System.out.println("sending message: " + msg + " to: " + addr);
+                msg.send(nodeDealerSocket);
             }
         }
+        ZMsg msg = new ZMsg();
+        msg.addString("REMOVE");
+        msg.addString(deadNeighbourAddress);
 
-        ZMsg brokerMsg = new ZMsg();
-        brokerMsg.addString("REMOVE");
-        brokerMsg.addString(deadNeighbourAddress);
-        brokerMsg.send(this.pushSocket);
+        byte[] identity = serverAddress.getBytes();
+        ZMQ.Socket brokerSocket = context.createSocket(SocketType.DEALER);
+        brokerSocket.setIdentity(identity);
+        brokerSocket.connect(brokerAddress);
+        msg.send(brokerSocket);
+
         
     }
     
@@ -133,35 +136,42 @@ public class ServerNode {
         ZMsg msg = new ZMsg();
         msg.addString("JOIN");
         msg.addString(this.serverAddress);
-        msg.send(this.outgoingSocket);
 
-        ZMsg response = ZMsg.recvMsg(this.outgoingSocket);
+        byte[] identity = serverAddress.getBytes();
+        ZMQ.Socket brokerSocket = context.createSocket(SocketType.DEALER);
+        brokerSocket.setIdentity(identity);
+        brokerSocket.connect(brokerAddress);
+        msg.send(brokerSocket);
+
+        ZMsg response = ZMsg.recvMsg(brokerSocket); //not sure if this is correct
+        System.out.println("RECEIVED RESPONSE: " + response);
         if (response != null) {
             String ringState = response.popString();
             this.ring = utils.stringToTreeMap(ringState);
             System.out.println("Received ring state: " + this.ring);
+            
 
-
-            for(String nodeAddress : this.ring.values()){
-                if(!Objects.equals(nodeAddress, this.serverAddress)){
-                    try (ZMQ.Socket msgSocket = context.createSocket(SocketType.PUSH)) {
-                        msgSocket.connect(nodeAddress.substring(0, nodeAddress.length() - 1) + "1"); //connect to server's pull socket
-                        ZMsg serverMsg = new ZMsg();
-                        serverMsg.addString("JOIN");
-                        serverMsg.addString(this.serverAddress);
-                        System.out.println("message sent: " + serverMsg + " to server: " + nodeAddress.substring(0, nodeAddress.length() - 1) + "1");
-                        serverMsg.send(msgSocket);
-                    }
+            for (String nodeAddress : this.ring.values()) {
+                if (!Objects.equals(nodeAddress, this.serverAddress)) {
+                    ZMQ.Socket nodeDealerSocket = context.createSocket(SocketType.DEALER);
+                    msg = new ZMsg();
+                    msg.addString("JOIN");
+                    msg.addString(this.serverAddress);
+                    String addr = nodeAddress.substring(0, nodeAddress.length() - 1) + "1";
+                    nodeDealerSocket.connect(addr);
+                    System.out.println("sending message: " + msg + " to: " + addr);
+                    msg.send(nodeDealerSocket);
                 }
             }
         }
+        brokerSocket.close();
     }
 
     private void listenForMessages() {
         System.out.println("Listening for messages");
         Poller poller = context.createPoller(2);
         poller.register(socket, Poller.POLLIN);
-        poller.register(pullSocket, Poller.POLLIN);
+        poller.register(dealerSocket, Poller.POLLIN);
 
         while (!Thread.currentThread().isInterrupted()) {
             poller.poll(); // Wait for an event on either socket
@@ -174,9 +184,9 @@ public class ServerNode {
             }
 
             if (poller.pollin(1)) { // Check PULL socket
-                ZMsg pullRequest = ZMsg.recvMsg(pullSocket);
-                if (pullRequest != null) {
-                    handlePullRequest(pullRequest);
+                ZMsg dealerRequest = ZMsg.recvMsg(dealerSocket);
+                if (dealerRequest != null) {
+                    handleDealerRequest(dealerRequest);
                 }
             }
         }
@@ -198,19 +208,19 @@ public class ServerNode {
         }
     }
 
-    private void handlePullRequest(ZMsg request) {
+    private void handleDealerRequest(ZMsg request) {
         String header = request.popString();
         String server = null;
-        System.out.println("PULL REQUEST: " + header);
+        System.out.println("DEALER REQUEST: " + header);
         switch (header) {
             case "JOIN" -> {
-                System.out.println("SERVER JOINED: " + ring);
                 server = request.popString();
+                System.out.println("SERVER JOINED: " + server);
                 consistentHashing.addServer(server, ring);
             }
             case "REMOVE" -> {
-                System.out.println("SERVER REMOVED: " + ring);
                 server = request.popString();
+                System.out.println("SERVER REMOVED: " + server);
                 consistentHashing.removeServer(server, ring);
             }
             default -> {

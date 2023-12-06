@@ -21,8 +21,6 @@ public class ConsistentHashing {
             hash = getHash(server + i);
             ring.put(hash, server);
         }
-        System.out.println("ADDING SERVER " + server);
-        
         System.out.println("RING UPDATED + : " + ring);
     }
 
