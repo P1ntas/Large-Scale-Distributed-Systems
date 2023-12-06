@@ -1,5 +1,7 @@
 package org.crdt;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.*;
 
 public class User {
@@ -39,6 +41,11 @@ public class User {
 
     public HashMap<UUID, ShoppingList> getShoppingLists() {
         return this.shoppingLists;
+    }
+
+    @JsonProperty("shoppingLists")
+    public List<ShoppingList> getShoppingListList() {
+        return new ArrayList<>(this.shoppingLists.values());
     }
 
     //setters

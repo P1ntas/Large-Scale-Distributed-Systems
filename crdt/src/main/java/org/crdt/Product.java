@@ -30,7 +30,7 @@ public class Product {
     }
 
     public Product(String name, UUID id, int quantity, long timestamp) {
-        this.id = UUID.randomUUID();
+        this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, timestamp);
