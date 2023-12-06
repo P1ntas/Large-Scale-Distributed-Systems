@@ -24,4 +24,27 @@ class Utils {
 
         return map;
     }
+
+    public static String mergeNames(String s1, String s2) {
+        if (s1.equals(s2)) {
+            return s1;
+        }
+
+        // Find the longest significant overlap
+        String overlap = findLongestOverlap(s1, s2);
+        if (overlap.length() >= 4) {
+            return s1 + s2.substring(overlap.length());
+        }
+
+        return s1 + s2;
+    }
+
+    private static String findLongestOverlap(String s1, String s2) {
+        for (int i = Math.min(s1.length(), s2.length()); i >= 4; i--) {
+            if (s1.endsWith(s2.substring(0, i))) {
+                return s2.substring(0, i);
+            }
+        }
+        return "";
+    }
 }

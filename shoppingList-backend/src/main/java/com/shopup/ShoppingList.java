@@ -3,10 +3,9 @@ package com.shopup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
+import static com.shopup.Utils.mergeNames;
 
 class ShoppingList {
     UUID id;
@@ -77,5 +76,35 @@ class ShoppingList {
 
     public void updateProduct(UUID id, Product product) {
         this.products.put(id, product);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ShoppingList that)) return false;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getName(), that.getName()) && Objects.equals(getProducts(), that.getProducts());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getProducts());
+    }
+
+    public ShoppingList merge(ShoppingList other) {
+        if (this.equals(other)) return this;
+        this.name = mergeNames(this.name, other.name);
+
+        if (!Objects.equals(this.name, other.name)) {
+
+        }
+
+        /* for each product in products use the merge function of the Product class to merge products of this and other with the same id */
+        for (Product product : this.products.values()) {
+            if (other.products.containsKey(product.getId())) {
+                product.merge(other.products.get(product.getId()));
+            }
+        }
+
+        return this;
     }
 }

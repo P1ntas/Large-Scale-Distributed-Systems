@@ -1,5 +1,7 @@
 package com.shopup;
 
+import java.util.Objects;
+
 public class PNCounter {
     GCounter positiveGCounter;
     GCounter negativeGCounter;
@@ -44,5 +46,17 @@ public class PNCounter {
 
     public int value(){
         return this.positiveGCounter.counter - this.negativeGCounter.counter;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PNCounter pnCounter)) return false;
+        return Objects.equals(getPositiveGCounter(), pnCounter.getPositiveGCounter()) && Objects.equals(getNegativeGCounter(), pnCounter.getNegativeGCounter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPositiveGCounter(), getNegativeGCounter());
     }
 }

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class JSONHandler {
-    private static final String DEFAULT_FILE_NAME = "src/main/resources/john_doe.json";
+    private static final String DEFAULT_FILE_NAME = "john_doe.json";
 
     /*public static Map<String, User> readFromJSON(String fileName) throws IOException {
         if (fileName == null || fileName.isEmpty()) {
@@ -62,10 +62,13 @@ public class JSONHandler {
         return users;
     }*/
 
-    public static User readFromJSON(String fileName) throws IOException {
+    public static User readFromJSON(String fileName, boolean server) throws IOException {
         if (fileName == null || fileName.isEmpty()) {
             fileName = DEFAULT_FILE_NAME;
         }
+
+        if (server) fileName = "server/" + fileName;
+        else fileName = "src/main/resources/" + fileName;
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -78,11 +81,15 @@ public class JSONHandler {
         return user;
     }
 
-    public static void writeToJSON(User user) throws IOException {
+    public static void writeToJSON(User user, boolean server) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        String fileName = "src/main/resources/" + user.getUsername() + ".json";
+        String fileName = "" + user.getUsername() + ".json";
+
+        if (server) {
+            fileName = "server/" + user.getUsername() + ".json";
+        }
         mapper.writeValue(new File(fileName), user);
     }
 
@@ -108,10 +115,10 @@ public class JSONHandler {
     // Example usage
     public static void main(String[] args) {
         try {
-            User user = readFromJSON("");
-            User user1 = readFromJSON("src/main/resources/emily_clark.json");
-            writeToJSON(user);
-            writeToJSON(user1);
+            User user = readFromJSON("", false);
+            User user1 = readFromJSON("emily_clark.json", false);
+            writeToJSON(user, false);
+            writeToJSON(user1,false);
         } catch (IOException e) {
             e.printStackTrace();
         }

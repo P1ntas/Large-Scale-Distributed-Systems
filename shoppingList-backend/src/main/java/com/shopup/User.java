@@ -3,10 +3,9 @@ package com.shopup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
+import static com.shopup.Utils.mergeNames;
 
 public class User {
     String username;
@@ -79,4 +78,36 @@ public class User {
     public void setPNCounter(PNCounter counter) {
         this.counter = counter;
     }
+
+    public boolean is(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getId(), user.getId()) && Objects.equals(getShoppingLists(), user.getShoppingLists()) && Objects.equals(getCounter(), user.getCounter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername(), getId(), getShoppingLists(), getCounter());
+    }
+
+    public User merge(User other) {
+        if (this.equals(other)) return this;
+        this.username = mergeNames(this.username, other.username);
+
+        for (ShoppingList list : this.shoppingLists.values()) {
+            if (other.shoppingLists.containsKey(list.getId())) {
+                list.merge(other.shoppingLists.get(list.getId()));
+            }
+        }
+
+        return this;
+    }
+
 }

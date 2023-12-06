@@ -3,21 +3,22 @@ package com.shopup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
 import java.util.UUID;
+
+import static com.shopup.Utils.mergeNames;
 
 public class Product {
     UUID id;
     String name;
     int quantity;
     VectorClock vectorClock;
-    String lastName;
 
     public Product(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.quantity = 1;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
-        this.lastName = "";
     }
 
     public Product(String name, UUID id, int quantity) {
@@ -25,7 +26,6 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
-        this.lastName = "";
     }
 
     public Product(String name, UUID id, int quantity, long timestamp) {
@@ -33,7 +33,6 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, timestamp);
-        this.lastName = "";
     }
 
     public Product(String name, int quantity, VectorClock vectorClock) {
@@ -41,7 +40,6 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = vectorClock;
-        this.lastName = "";
     }
 
     @JsonCreator
@@ -73,7 +71,6 @@ public class Product {
 
     //setters
     public void setName(String name) {
-        this.lastName = this.name;
         this.name = name;
     }
 
@@ -100,33 +97,33 @@ public class Product {
         this.quantity--;
     }
 
-    public void mergeProduct(Product other) {
+    public Product merge(Product other) {
+        if (this.equals(other)) return this;
 
-        if (this.name.contains(this.lastName) && (other.name.contains(this.lastName))) {
-            this.name = this.name + other.name.replace(this.lastName, "");
-        }
-        if (this.name.contains(other.lastName) && (other.name.contains(other.lastName))) {
-            this.name = this.name + other.name.replace(other.lastName, "");
-        }
-        // Concatenating the names
-        if (!this.name.equals(other.name)) {
-            if (other.name.contains(this.name)) {
-                this.name = other.name;
-            }
-            else if (!this.name.contains(other.name)) {
-                this.name = this.name + other.name;
-            }
-        }
+        this.name = mergeNames(this.name, other.name);
 
-        // Determining which product has the larger vector clock
-        boolean thisClockIsGreater = this.vectorClock.isGreaterThan(other.vectorClock);
+        if (this.vectorClock.getTimestamp() > other.vectorClock.getTimestamp()) {
 
-        if (!thisClockIsGreater) {
-            // If the other product has the larger clock, adopt its quantity
             this.quantity = other.quantity;
         }
+        else if (this.vectorClock.getTimestamp() == other.vectorClock.getTimestamp()) {
+            this.quantity = Math.max(this.quantity, other.quantity);
+        }
 
-        // Merge the vector clocks
         this.vectorClock.merge(other.vectorClock);
+
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product product)) return false;
+        return getQuantity() == product.getQuantity() && Objects.equals(getId(), product.getId()) && Objects.equals(getName(), product.getName()) && Objects.equals(getVectorClock(), product.getVectorClock());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getQuantity(), getVectorClock());
     }
 }

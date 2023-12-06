@@ -7,7 +7,7 @@
     "products" : [ {
       "name" : "Nails",
       "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-      "quantity" : 100,
+      "quantity" : 10,
       "vectorClock" : {
         "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
         "timestamp" : 1699889400000

@@ -7,6 +7,7 @@ import org.zeromq.ZMQ.Poller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
 import java.util.*;
@@ -16,6 +17,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.zeromq.SocketType;
+
+import static com.shopup.JSONHandler.*;
 
 public class ServerNode {
     private final String serverAddress;
@@ -31,7 +34,7 @@ public class ServerNode {
 
     private final Utils utils = new Utils();
 
-    private Map<String, User> userDataStore = new HashMap<>();
+    private Map<UUID, User> userDataStore = new HashMap<>();
     
     public ServerNode(String serverAddress, String brokerAddress) {
         this.serverAddress = serverAddress;
@@ -241,10 +244,42 @@ public class ServerNode {
         ObjectMapper mapper = new ObjectMapper();
         try {
             User user = mapper.readValue(jsonData, User.class);
-            userDataStore.put(user.getUsername(), user);
+            userDataStore.put(user.getId(), user);
+            writeToJSON(user, true);
             System.out.println("User data received and stored for user: " + user.getUsername());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void loadAndMergeUsers() {
+        String directoryPath = "src/main/resources/";
+        File folder = new File(directoryPath);
+        File[] listOfFiles = folder.listFiles();
+
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    String filename = file.getName();
+                    if (filename.endsWith(".json")) {
+                        User fileUser = null;
+                        try {
+                            fileUser = readFromJSON(filename, false);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if (fileUser != null) {
+                            User storedUser = userDataStore.get(fileUser.getId());
+                            if (storedUser != null) {
+                                if (!storedUser.equals(fileUser)) {
+                                    User mergedUser = storedUser.merge(fileUser);
+                                    userDataStore.put(fileUser.getId(), mergedUser);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
