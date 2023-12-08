@@ -110,4 +110,17 @@ public class User {
         return this;
     }
 
+    public void removeShoppingList(UUID id) {
+        this.shoppingLists.remove(id);
+    }
+
+    public void updateShoppingList(UUID shoppingListID, UUID productID, Product product){
+        this.shoppingLists.get(shoppingListID).updateProduct(productID, product);
+    }
+
+
+    public void removeProduct(UUID shoppingListID, UUID productID){
+        this.shoppingLists.get(shoppingListID).removeProduct(productID);
+    }
+
 }

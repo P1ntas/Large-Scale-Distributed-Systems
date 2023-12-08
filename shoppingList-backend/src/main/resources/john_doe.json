@@ -27,7 +27,7 @@
     "products" : [ {
       "name" : "Bread",
       "id" : "c0b067ec-a4a1-4687-8c1a-3401c2edef6e",
-      "quantity" : 1,
+      "quantity" : 4,
       "vectorClock" : {
         "id" : "c0b067ec-a4a1-4687-8c1a-3401c2edef6e",
         "timestamp" : 1699889400000

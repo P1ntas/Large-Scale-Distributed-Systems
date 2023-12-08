@@ -90,11 +90,22 @@ public class Product {
         this.quantity++;
     }
 
+    public void incrementQuantity(int added) {
+        this.quantity += added;
+    }
+
     public void decrementQuantity() {
         if (this.quantity == 1) {
             throw new IllegalArgumentException("Quantity cannot be negative");
         }
         this.quantity--;
+    }
+
+    public void decrementQuantity(int subtracted) {
+        if (this.quantity <= subtracted) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
+        this.quantity -= subtracted;
     }
 
     public Product merge(Product other) {

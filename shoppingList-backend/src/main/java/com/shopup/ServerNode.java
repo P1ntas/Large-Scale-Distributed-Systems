@@ -274,6 +274,11 @@ public class ServerNode {
                                 if (!storedUser.equals(fileUser)) {
                                     User mergedUser = storedUser.merge(fileUser);
                                     userDataStore.put(fileUser.getId(), mergedUser);
+                                    try {
+                                        writeToJSON(mergedUser, true);
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
                             }
                         }

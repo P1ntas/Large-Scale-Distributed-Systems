@@ -82,15 +82,18 @@ public class JSONHandler {
     }
 
     public static void writeToJSON(User user, boolean server) throws IOException {
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        String fileName = "" + user.getUsername() + ".json";
+        String fileName = "src/main/resources/" + user.getUsername() + ".json";
 
         if (server) {
             fileName = "server/" + user.getUsername() + ".json";
         }
         mapper.writeValue(new File(fileName), user);
+
+
     }
 
     public static void distributeUserData(User user, String serverAddress, TreeMap<Integer, String> ring) throws JsonProcessingException {
