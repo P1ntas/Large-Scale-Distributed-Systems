@@ -41,6 +41,18 @@
         "timestamp" : 1699889400000
       }
     } ]
+  }, {
+    "name" : "Christmas",
+    "id" : "6fa08158-6524-4585-b19c-e44b49d09c75",
+    "products" : [ {
+      "name" : "Turkey",
+      "id" : "e025629a-7fae-42d8-b0bf-8efc54a6a0a4",
+      "quantity" : 1,
+      "vectorClock" : {
+        "id" : "e025629a-7fae-42d8-b0bf-8efc54a6a0a4",
+        "timestamp" : 1702074525728
+      }
+    } ]
   } ],
   "counter" : {
     "positiveGCounter" : {

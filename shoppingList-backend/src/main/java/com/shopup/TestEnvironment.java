@@ -27,9 +27,13 @@ public class TestEnvironment {
             // Read user data from JSON
             User user = readFromJSON("", true);
 
+            for (ShoppingList shoppinglist : user.getShoppingListList()) {
+                distributeUserData(shoppinglist);
+            }
+
             // Distribute user data across server nodes
-            distributeUserData(user, node.getServerAddress(), node.getRing()); // Assuming you have consistentHashing and ring instances
-            node.loadAndMergeUsers();
+             // Assuming you have consistentHashing and ring instances
+            //node.loadAndMergeUsers();
 
             writeToJSON(user, false);
 

@@ -209,8 +209,8 @@ public class ServerNode {
                 response.addString("PONG");
                 response.send(socket);
             }
-            case "USER_DATA" -> {
-                handleUserData(request);
+            case "LIST_DATA" -> {
+                //handleUserData(request);
             }
             default -> {
                 // ignore
@@ -239,7 +239,7 @@ public class ServerNode {
         }
     }
 
-    private void handleUserData(ZMsg request) {
+    /*private void handleUserData(ZMsg request) {
         String jsonData = request.popString();
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -304,7 +304,7 @@ public class ServerNode {
             }
         }
         return user;
-    }
+    }*/
 
     
     public static void main(String[] args) {
