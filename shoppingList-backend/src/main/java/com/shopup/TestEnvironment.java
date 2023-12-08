@@ -36,7 +36,7 @@ public class TestEnvironment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /*String res = mergeNames("banana2", "banana1");
+        /*String res = mergeNames("banana1", "banana2");
         System.out.println(res);*/
     }
 }

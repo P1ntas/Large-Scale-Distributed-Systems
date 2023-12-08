@@ -107,6 +107,8 @@ public class User {
             }
         }
 
+        this.counter.merge(other.counter);
+
         return this;
     }
 
