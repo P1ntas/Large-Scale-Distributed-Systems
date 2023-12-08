@@ -6,13 +6,18 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 public class ConsistentHashing {
     private final int n_virtulisation;
+    private final int n_replication;
     private final MessageDigest md;
 
-    public ConsistentHashing(int n_virtulisation) throws NoSuchAlgorithmException {
+    public ConsistentHashing(int n_virtulisation, int n_replication) throws NoSuchAlgorithmException {
         this.n_virtulisation = n_virtulisation;
+        this.n_replication = n_replication;
         this.md = MessageDigest.getInstance("MD5");
     }
 
+    public int getN_replication(){
+        return this.n_replication;
+    }
     public void addServer(String server, TreeMap<Integer, String> ring) {
         int hash = getHash(server);
         ring.put(hash, server);
@@ -70,7 +75,7 @@ public class ConsistentHashing {
         return ring.get(ring.firstKey());
     }
 
-    private int getHash(Object key) {
+    int getHash(Object key) {
 
         this.md.update(key.toString().getBytes(StandardCharsets.UTF_8));
         byte[] bytes = this.md.digest();
