@@ -303,12 +303,6 @@ public class ServerNode {
                 return mergedUser;
             }
         }
-        userDataStore.put(user.getId(), user);
-        try {
-            writeToJSON(user, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         return user;
     }
 
