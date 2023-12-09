@@ -1,5 +1,12 @@
 package com.shopup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
 public class PNCounter {
     GCounter positiveGCounter;
     GCounter negativeGCounter;
@@ -7,6 +14,13 @@ public class PNCounter {
     public PNCounter() {
         this.positiveGCounter = new GCounter();
         this.negativeGCounter = new GCounter();
+    }
+
+    @JsonCreator
+    public PNCounter(@JsonProperty("positiveGCounter") GCounter positiveGCounter,
+                     @JsonProperty("negativeGCounter") GCounter negativeGCounter){
+        this.positiveGCounter = new GCounter(positiveGCounter.getCounter());
+        this.negativeGCounter = new GCounter(negativeGCounter.getCounter());
     }
 
     public GCounter getPositiveGCounter(){
@@ -25,24 +39,35 @@ public class PNCounter {
         return this.negativeGCounter = negativeGCounter;
     }
 
-    public void increment(){
-        this.positiveGCounter.add();
+    public void increment(UUID id, Integer value){
+        positiveGCounter.add(id, value);
     }
 
-    public void decrement(){
-        this.negativeGCounter.add();
+    public void decrement(UUID id, Integer value){
+        negativeGCounter.add(id, value);
     }
 
     public void merge(PNCounter other){
-        if (this.positiveGCounter.counter < other.positiveGCounter.counter){
-            this.positiveGCounter.counter = other.positiveGCounter.counter;
-        }
-        if (this.negativeGCounter.counter < other.negativeGCounter.counter){
-            this.negativeGCounter.counter = other.negativeGCounter.counter;
-        }
+        positiveGCounter.merge(other.positiveGCounter);
+        negativeGCounter.merge(other.negativeGCounter);
     }
 
-    public int value(){
-        return this.positiveGCounter.counter - this.negativeGCounter.counter;
+    public int calculateValue(){
+        int value = positiveGCounter.calculateValue() - negativeGCounter.calculateValue();
+        return Math.max(value, 0);
+    }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PNCounter pnCounter)) return false;
+        return Objects.equals(getPositiveGCounter(), pnCounter.getPositiveGCounter()) && Objects.equals(getNegativeGCounter(), pnCounter.getNegativeGCounter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPositiveGCounter(), getNegativeGCounter());
     }
 }

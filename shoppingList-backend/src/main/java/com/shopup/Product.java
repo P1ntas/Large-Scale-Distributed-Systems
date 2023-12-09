@@ -3,21 +3,31 @@ package com.shopup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
 import java.util.UUID;
+
+import static com.shopup.Utils.mergeNames;
 
 public class Product {
     UUID id;
     String name;
     int quantity;
     VectorClock vectorClock;
-    String lastName;
+    PNCounter pnCounter;
 
     public Product(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
         this.quantity = 1;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
-        this.lastName = "";
+        this.pnCounter = new PNCounter();
+    }
+
+    public Product(String name, int quantity) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.quantity = quantity;
+        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
     }
 
     public Product(String name, UUID id, int quantity) {
@@ -25,7 +35,7 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
-        this.lastName = "";
+        this.pnCounter = new PNCounter();
     }
 
     public Product(String name, UUID id, int quantity, long timestamp) {
@@ -33,7 +43,7 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = new VectorClock(this.id, timestamp);
-        this.lastName = "";
+        this.pnCounter = new PNCounter();
     }
 
     public Product(String name, int quantity, VectorClock vectorClock) {
@@ -41,18 +51,22 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.vectorClock = vectorClock;
-        this.lastName = "";
+        this.pnCounter = new PNCounter();
     }
 
     @JsonCreator
     public Product(@JsonProperty("name") String name,
                    @JsonProperty("id") UUID id,
                    @JsonProperty("quantity") int quantity,
-                   @JsonProperty("vectorClock") VectorClock vectorClock) {
+                   @JsonProperty("vectorClock") VectorClock vectorClock,
+                   @JsonProperty("pnCounter") PNCounter pnCounter) {
         this.name = name;
         this.id = id != null ? id : UUID.randomUUID();
         this.quantity = quantity;
         this.vectorClock = vectorClock;
+        this.pnCounter = pnCounter;
+
+
     }
 
     public UUID getId() {
@@ -64,24 +78,31 @@ public class Product {
     }
 
     public int getQuantity() {
-        return this.quantity;
+        return this.pnCounter.calculateValue();
     }
 
     public VectorClock getVectorClock() {
         return this.vectorClock;
     }
 
+    public PNCounter getPnCounter() {
+        return pnCounter;
+    }
+
     //setters
     public void setName(String name) {
-        this.lastName = this.name;
         this.name = name;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(UUID userID,int quantity) {
         if (quantity < 1) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
+            System.out.println("Cannot add or decrement number smaller than 1");
         }
-        this.quantity = quantity;
+        if(this.quantity - quantity > 0){
+            decrementQuantity(userID, this.quantity - quantity);
+        }else{
+            incrementQuantity(userID,quantity - this.quantity);
+        }
     }
 
     public void setVectorClock(VectorClock vectorClock) {
@@ -89,44 +110,41 @@ public class Product {
     }
 
     // Methods
-    public void incrementQuantity() {
-        this.quantity++;
+
+    public void incrementQuantity(UUID userID, int added) {
+        this.pnCounter.increment(userID, added);
+        this.quantity = this.pnCounter.calculateValue();
     }
 
-    public void decrementQuantity() {
-        if (this.quantity == 1) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
-        }
-        this.quantity--;
+    public void decrementQuantity(UUID userID, int added) {
+        this.pnCounter.decrement(userID, added);
+        this.quantity = this.pnCounter.calculateValue();
     }
 
-    public void mergeProduct(Product other) {
+    public Product merge(Product other) {
+        if (this.equals(other)) return null;
 
-        if (this.name.contains(this.lastName) && (other.name.contains(this.lastName))) {
-            this.name = this.name + other.name.replace(this.lastName, "");
-        }
-        if (this.name.contains(other.lastName) && (other.name.contains(other.lastName))) {
-            this.name = this.name + other.name.replace(other.lastName, "");
-        }
-        // Concatenating the names
-        if (!this.name.equals(other.name)) {
-            if (other.name.contains(this.name)) {
-                this.name = other.name;
-            }
-            else if (!this.name.contains(other.name)) {
-                this.name = this.name + other.name;
-            }
-        }
+        this.vectorClock.setTimestamp(System.currentTimeMillis());
+        other.getVectorClock().setTimestamp(System.currentTimeMillis());
 
-        // Determining which product has the larger vector clock
-        boolean thisClockIsGreater = this.vectorClock.isGreaterThan(other.vectorClock);
+        pnCounter.merge(other.getPnCounter());
 
-        if (!thisClockIsGreater) {
-            // If the other product has the larger clock, adopt its quantity
-            this.quantity = other.quantity;
-        }
+        return this;
+    }
 
-        // Merge the vector clocks
-        this.vectorClock.merge(other.vectorClock);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product product)) return false;
+        return getQuantity() == product.getQuantity() &&
+                Objects.equals(getId(), product.getId()) &&
+                Objects.equals(getName(), product.getName()) &&
+                Objects.equals(getVectorClock(), product.getVectorClock()) &&
+                Objects.equals(getPnCounter(), product.getPnCounter());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getQuantity(), getVectorClock());
     }
 }

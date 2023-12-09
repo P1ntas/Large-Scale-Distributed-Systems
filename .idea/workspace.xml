@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8428ce61-81d0-4968-a4b8-3698fc091636" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/Broker.class" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/Broker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/ConsistentHashing.class" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/ConsistentHashing.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/ServerNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/ServerNode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/JSONHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/JSONHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TerminalInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TerminalInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TestEnvironment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/TerminalInterface.class" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/TerminalInterface.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,23 +40,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "interface",
-    "last_opened_file_path": "/Users/phranklin/Documents/Uni/SDLE/SDLE-PROJ",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;loadServer&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/phranklin/Documents/Uni/SDLE/SDLE-PROJ&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -82,11 +81,12 @@
       </method>
     </configuration>
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.Main" />
-      <module name="crdt" />
+      <option name="MAIN_CLASS_NAME" value="com.shopup.Main" />
+      <module name="shoppingList-backend" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shoppingList-backend" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.*" />
+          <option name="PATTERN" value="com.shopup.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -116,6 +116,11 @@
       <workItem from="1701725927162" duration="200000" />
       <workItem from="1701726154312" duration="2446000" />
       <workItem from="1701768555723" duration="4586000" />
+      <workItem from="1701993413338" duration="17000" />
+      <workItem from="1701995291191" duration="107000" />
+      <workItem from="1701995817768" duration="106000" />
+      <workItem from="1702119096227" duration="599000" />
+      <workItem from="1702148019160" duration="2420000" />
     </task>
     <servers />
   </component>
