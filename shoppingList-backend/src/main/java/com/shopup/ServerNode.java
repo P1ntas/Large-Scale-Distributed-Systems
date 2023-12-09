@@ -298,41 +298,76 @@ public class ServerNode {
                 server = request.popString();
                 System.out.println("SERVER JOINED: " + server);
                 consistentHashing.addServer(server, ring);
+                rebalance();
+                replicate();
             }
             case "REMOVE" -> {
                 server = request.popString();
                 System.out.println("SERVER REMOVED: " + server);
                 consistentHashing.removeServer(server, ring);
+                rebalance();
+                replicate();
             }
             case "REQUEST" -> {
-                // Logic for handling a request for data
-                String itemId = request.popString();
-                // Fetch the data from your data store or perform the necessary action
-                //String data = fetchData(itemId);
-
                 ZMsg response = new ZMsg();
-                response.addString("data");
-                response.send(dealerSocket);
+                ObjectMapper mapper = new ObjectMapper();
+                String itemID = request.popString();
+                ShoppingList requestedList = null;
+
+                for (ShoppingList shoppingList : this.shoppingLists){
+                    if(shoppingList.getId().toString().equals(itemID)){
+                        requestedList = shoppingList;
+                    }
+                }
+
+                String jsonResponse = null;
+                if(requestedList == null){
+                    jsonResponse = "NULL";
+                }
+                else{
+                    try {
+                        jsonResponse = mapper.writeValueAsString(requestedList);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                response.addString(jsonResponse);
+                response.send(this.dealerSocket);
+                rebalance();
+
             }
             case "UPDATE" -> {
                 ZMsg response = new ZMsg();
-                String updatedList = null;
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonData = request.popString();
-                ShoppingList item = null;
+                ShoppingList clientList, updatedList = null;
                 try {
-                    item = mapper.readValue(jsonData, ShoppingList.class);
+                    clientList = mapper.readValue(jsonData, ShoppingList.class);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
 
-                String itemID = item.getId().toString();
+                String itemID = clientList.getId().toString();
                 for (ShoppingList shoppingList : this.shoppingLists){
                     if(shoppingList.getId().toString().equals(itemID)){
-
+                        updatedList = shoppingList.merge(clientList);
                     }
                 }
-
+                if(updatedList == null){
+                    this.shoppingLists.add(clientList);
+                    updatedList = clientList;
+                }
+                String jsonResponse = null;
+                try {
+                    jsonResponse = mapper.writeValueAsString(updatedList);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                response.addString(jsonResponse);
+                response.send(this.dealerSocket);
+                rebalance();
+                replicate();
             }
             default -> {
             }
