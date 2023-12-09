@@ -11,6 +11,16 @@
       "vectorClock" : {
         "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
         "timestamp" : 1699889400000
+      },
+      "counter" : {
+        "positiveGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 10,
+          "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+        },
+        "negativeGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 0,
+          "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+        }
       }
     }, {
       "name" : "Hammer",
@@ -19,6 +29,16 @@
       "vectorClock" : {
         "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
         "timestamp" : 1699889400000
+      },
+      "counter" : {
+        "positiveGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 1,
+          "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+        },
+        "negativeGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 0,
+          "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+        }
       }
     } ]
   }, {
@@ -31,6 +51,14 @@
       "vectorClock" : {
         "id" : "c0b067ec-a4a1-4687-8c1a-3401c2edef6e",
         "timestamp" : 1699889400000
+      },
+      "counter" : {
+        "positiveGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 4
+        },
+        "negativeGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 0
+        }
       }
     }, {
       "name" : "Milk",
@@ -39,15 +67,15 @@
       "vectorClock" : {
         "id" : "16cb4dc7-a6ae-4430-b257-1dca01b38187",
         "timestamp" : 1699889400000
+      },
+      "counter" : {
+        "positiveGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 2
+        },
+        "negativeGCounter" : {
+          "fafd2105-86ef-4653-9915-8960ccb09a68": 0
+        }
       }
     } ]
-  } ],
-  "counter" : {
-    "positiveGCounter" : {
-      "counter" : 0
-    },
-    "negativeGCounter" : {
-      "counter" : 0
-    }
-  }
+  } ]
 }

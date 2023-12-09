@@ -160,10 +160,10 @@ public class GUI{
                                                     switch(parts[3]){
                                                         case "+":
 
-                                                            product.incrementQuantity(Integer.parseInt(parts[4]));
+                                                            //product.incrementQuantity(Integer.parseInt(parts[4]));
                                                             break;
                                                         case "-":
-                                                            product.decrementQuantity(Integer.parseInt(parts[4]));
+                                                            //product.decrementQuantity(Integer.parseInt(parts[4]));
                                                             break;
 
                                                     }

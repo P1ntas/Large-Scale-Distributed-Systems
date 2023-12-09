@@ -90,17 +90,16 @@ class ShoppingList {
         return Objects.hash(getId(), getName(), getProducts());
     }
 
-    public ShoppingList merge(ShoppingList other) {
+    public ShoppingList merge(ShoppingList other, UUID userId) {
         if (this.equals(other)) return this;
-        this.name = mergeNames(this.name, other.name);
-
-        if (!Objects.equals(this.name, other.name)) {
-
-        }
 
         /* for each product in products use the merge function of the Product class to merge products of this and other with the same id */
         for (Product product : this.products.values()) {
             if (other.products.containsKey(product.getId())) {
+                product.merge(other.products.get(product.getId()));
+            }else{
+                Product newProduct = new Product(product.getName(), userId, 0, System.currentTimeMillis());
+                addProduct(product);
                 product.merge(other.products.get(product.getId()));
             }
         }

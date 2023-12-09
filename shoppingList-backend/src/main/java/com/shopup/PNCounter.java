@@ -1,6 +1,11 @@
 package com.shopup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PNCounter {
     GCounter positiveGCounter;
@@ -9,6 +14,15 @@ public class PNCounter {
     public PNCounter() {
         this.positiveGCounter = new GCounter();
         this.negativeGCounter = new GCounter();
+    }
+
+    @JsonCreator
+    public PNCounter(@JsonProperty("positiveGCounter") Map<UUID,Integer> positiveGCounter,
+                     @JsonProperty("negativeGCounter") Map<UUID,Integer> negativeGCounter){
+        this.positiveGCounter = new GCounter();
+        this.negativeGCounter = new GCounter();
+        this.positiveGCounter.setCounter(positiveGCounter);
+        this.negativeGCounter.setCounter(negativeGCounter);
     }
 
     public GCounter getPositiveGCounter(){
@@ -27,26 +41,25 @@ public class PNCounter {
         return this.negativeGCounter = negativeGCounter;
     }
 
-    public void increment(){
-        this.positiveGCounter.add();
+    public void increment(UUID id, Integer value){
+        positiveGCounter.add(id, value);
     }
 
-    public void decrement(){
-        this.negativeGCounter.add();
+    public void decrement(UUID id, Integer value){
+        negativeGCounter.add(id, value);
     }
 
     public void merge(PNCounter other){
-        if (this.positiveGCounter.counter < other.positiveGCounter.counter){
-            this.positiveGCounter.counter = other.positiveGCounter.counter;
-        }
-        if (this.negativeGCounter.counter < other.negativeGCounter.counter){
-            this.negativeGCounter.counter = other.negativeGCounter.counter;
-        }
+        positiveGCounter.merge(other.positiveGCounter);
+        negativeGCounter.merge(other.negativeGCounter);
     }
 
-    public int value(){
-        return this.positiveGCounter.counter - this.negativeGCounter.counter;
+    public int getValue(){
+        int value = positiveGCounter.getValue() - negativeGCounter.getValue();
+        return Math.max(value, 0);
     }
+
+
 
     @Override
     public boolean equals(Object o) {

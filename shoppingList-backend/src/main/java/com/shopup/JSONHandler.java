@@ -62,13 +62,14 @@ public class JSONHandler {
         return users;
     }*/
 
+
     public static User readFromJSON(String fileName, boolean server) throws IOException {
         if (fileName == null || fileName.isEmpty()) {
             fileName = DEFAULT_FILE_NAME;
         }
 
         if (server) fileName = "server/" + fileName;
-        else fileName = "src/main/resources/" + fileName;
+        else fileName = "shoppingList-backend/src/main/resources/" + fileName;
 
         ObjectMapper mapper = new ObjectMapper();
 
