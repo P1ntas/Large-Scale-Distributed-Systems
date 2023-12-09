@@ -23,6 +23,13 @@ public class Product {
         this.pnCounter = new PNCounter();
     }
 
+    public Product(String name, int quantity) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.quantity = quantity;
+        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
+    }
+
     public Product(String name, UUID id, int quantity) {
         this.id = id;
         this.name = name;

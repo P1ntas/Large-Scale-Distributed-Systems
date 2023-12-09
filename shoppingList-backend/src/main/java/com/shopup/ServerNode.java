@@ -209,8 +209,8 @@ public class ServerNode {
                 response.addString("PONG");
                 response.send(socket);
             }
-            case "USER_DATA" -> {
-                handleUserData(request);
+            case "LIST_DATA" -> {
+                //handleUserData(request);
             }
             default -> {
                 // ignore
@@ -239,13 +239,14 @@ public class ServerNode {
         }
     }
 
-    private void handleUserData(ZMsg request) {
+    /*private void handleUserData(ZMsg request) {
         String jsonData = request.popString();
         ObjectMapper mapper = new ObjectMapper();
         try {
             User user = mapper.readValue(jsonData, User.class);
-            userDataStore.put(user.getId(), user);
-            writeToJSON(user, true);
+            if (user != null) {
+                user = loadAndMergeUser(user);
+            }
             System.out.println("User data received and stored for user: " + user.getUsername());
         } catch (IOException e) {
             e.printStackTrace();
@@ -287,6 +288,23 @@ public class ServerNode {
             }
         }
     }
+
+    public User loadAndMergeUser(User user) {
+        User storedUser = userDataStore.get(user.getId());
+        if (storedUser != null) {
+            if (!storedUser.equals(user)) {
+                User mergedUser = storedUser.merge(user);
+                userDataStore.put(user.getId(), mergedUser);
+                try {
+                    writeToJSON(mergedUser, true);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return mergedUser;
+            }
+        }
+        return user;
+    }*/
 
     
     public static void main(String[] args) {
