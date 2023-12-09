@@ -5,6 +5,7 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -27,8 +28,16 @@ public class TerminalInterface {
     private void loadUser() throws IOException {
         System.out.println("Enter your username:");
         String username = reader.readLine();
-        this.currentUser = JSONHandler.readFromJSON(username + ".json", false);
-        System.out.println("User Loaded: " + currentUser.getUsername());
+        File userFile = new File("src/main/resources/" + username + ".json");
+
+        if (userFile.exists()) {
+            this.currentUser = JSONHandler.readFromJSON(username + ".json", false);
+            System.out.println("User Loaded: " + currentUser.getUsername());
+        } else {
+            this.currentUser = new User(username);
+            writeToJSON(currentUser, false);
+            System.out.println("New user created: " + currentUser.getUsername());
+        }
     }
 
     private void connectToServer() throws IOException {
