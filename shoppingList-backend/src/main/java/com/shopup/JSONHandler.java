@@ -46,7 +46,7 @@ public class JSONHandler {
 
     }
 
-    public static void distributeUserData(ShoppingList shoppingList) throws JsonProcessingException {
+    public static void sendListToServer(ShoppingList shoppingList) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         try (ZContext context = new ZContext()) {
             try (ZMQ.Socket socket = context.createSocket(ZMQ.REQ)) {
@@ -54,6 +54,41 @@ public class JSONHandler {
                 String jsonData = mapper.writeValueAsString(shoppingList);
                 ZMsg msg = new ZMsg();
                 msg.addString("LIST_DATA");
+                msg.addString(jsonData);
+                msg.send(socket);
+
+                // ZMsg response = ZMsg.recvMsg(socket);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void sendListToServer(UUID uuid) {
+        try (ZContext context = new ZContext()) {
+            try (ZMQ.Socket socket = context.createSocket(ZMQ.REQ)) {
+                socket.connect("tcp://127.0.0.1:5001");
+                ZMsg msg = new ZMsg();
+                msg.addString("LIST_RETRIEVAL");
+                msg.addString(uuid.toString());
+                msg.send(socket);
+
+                ZMsg response = ZMsg.recvMsg(socket);
+                //need to receive shopping list to add to local files
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void sendDeleteListToServer(ShoppingList shoppingList) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        try (ZContext context = new ZContext()) {
+            try (ZMQ.Socket socket = context.createSocket(ZMQ.REQ)) {
+                socket.connect("tcp://127.0.0.1:5001");
+                String jsonData = mapper.writeValueAsString(shoppingList);
+                ZMsg msg = new ZMsg();
+                msg.addString("DELETE_LIST");
                 msg.addString(jsonData);
                 msg.send(socket);
 

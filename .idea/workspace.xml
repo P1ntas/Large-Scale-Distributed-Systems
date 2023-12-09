@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8428ce61-81d0-4968-a4b8-3698fc091636" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/JSONHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/JSONHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TerminalInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TerminalInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TestEnvironment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/TerminalInterface.class" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/TerminalInterface.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,6 +98,7 @@
       <workItem from="1701993413338" duration="17000" />
       <workItem from="1701995291191" duration="107000" />
       <workItem from="1701995817768" duration="106000" />
+      <workItem from="1702119096227" duration="599000" />
     </task>
     <servers />
   </component>
