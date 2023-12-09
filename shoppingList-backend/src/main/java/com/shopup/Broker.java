@@ -1,5 +1,7 @@
 package com.shopup;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 import org.zeromq.ZMsg;
@@ -13,68 +15,64 @@ public class Broker {
 
     private ConsistentHashing consistentHashing;
     private ZContext context;
-    private ZMQ.Socket repSocket; // REP socket for "JOIN" requests
-    private ZMQ.Socket pullSocket; // PULL socket for "REMOVE" requests
+    private ZMQ.Socket serverRoutSocket, clientRoutSocket; // REP socket for "JOIN" requests
+
     private TreeMap<Integer, String> ring;
 
     public Broker() throws NoSuchAlgorithmException {
-        this.consistentHashing = new ConsistentHashing(1);
+        this.consistentHashing = new ConsistentHashing(1, 2);
         this.context = new ZContext();
-        this.repSocket = context.createSocket(SocketType.REP);
-        this.repSocket.bind("tcp://127.0.0.1:5000");
-        this.pullSocket = context.createSocket(SocketType.PULL);
-        this.pullSocket.bind("tcp://127.0.0.1:5001");
+
+        this.serverRoutSocket = context.createSocket(SocketType.ROUTER);
+        this.serverRoutSocket.bind("tcp://127.0.0.1:5000");
+
+        this.clientRoutSocket = context.createSocket(SocketType.ROUTER);
+        this.clientRoutSocket.bind("tcp://127.0.0.1:5001");
+
         this.ring = new TreeMap<>();
     }
 
     public void start() {
-        Poller poller = context.createPoller(2);
-        poller.register(repSocket, Poller.POLLIN);
-        poller.register(pullSocket, Poller.POLLIN);
+        System.out.println("BROKER STARTED");
+        Poller poller = context.createPoller(1); //! LATEr ADD ROUTER CLIENT
+        poller.register(serverRoutSocket, Poller.POLLIN);
+        poller.register(clientRoutSocket, Poller.POLLIN);
 
         while (!Thread.currentThread().isInterrupted()) {
-            poller.poll(); // Wait for an event on either socket
+            poller.poll();
 
-            if (poller.pollin(0)) { // Check REP socket
-                ZMsg repRequest = ZMsg.recvMsg(repSocket);
-                if (repRequest != null) {
-                    handleRepRequest(repRequest);
+            if (poller.pollin(0)) { 
+                ZMsg serverRoutReq = ZMsg.recvMsg(serverRoutSocket);
+                if (serverRoutReq != null) {
+                    handleServerRoutRequest(serverRoutReq);
                 }
             }
-
-            if (poller.pollin(1)) { // Check PULL socket
-                ZMsg pullRequest = ZMsg.recvMsg(pullSocket);
-                if (pullRequest != null) {
-                    handlePullRequest(pullRequest);
+            if (poller.pollin(1)) {
+                ZMsg clientRoutReq = ZMsg.recvMsg(clientRoutSocket);
+                if (clientRoutReq != null) {
+                    handleClientRoutRequest(clientRoutReq);
                 }
             }
         }
     }
 
-    private void handleRepRequest(ZMsg request) {
+    private void handleServerRoutRequest(ZMsg request) {
+        System.out.println("REQUEST: " + request);
+        String dealerIdentity = request.popString();
         String header = request.popString();
         String server = null;
         ZMsg response = new ZMsg();
-        System.out.println("REQUEST: " + request);
+        System.out.println("identity: " + dealerIdentity);
+        response.addString(dealerIdentity);
+
         switch (header) {
             case "JOIN" -> {
-                System.out.println("SERVER JOINED: " + ring);
                 server = request.popString();
                 consistentHashing.addServer(server, ring);
                 response.addString(ring.toString());
-                response.send(repSocket);
+                System.out.println("RESPONSE SENT: " + response);
+                response.send(serverRoutSocket);
             }
-            default -> {
-            }
-            //ignore
-        }
-    }
-
-    private void handlePullRequest(ZMsg request) {
-        String header = request.popString();
-        String server = null;
-        System.out.println("REQUEST: " + request);
-        switch (header) {
             case "REMOVE" -> {
                 System.out.println("SERVER REMOVED: " + ring);
                 server = request.popString();
@@ -85,6 +83,102 @@ public class Broker {
             //ignore
         }
     }
+
+    private void handleClientRoutRequest(ZMsg request) {
+        System.out.println("REQUEST: " + request);
+        String clientIdentity = request.popString();
+        String header = request.popString();
+
+        switch (header) {
+            case "REQUEST" -> {
+                String itemID = request.popString();
+                int hashedItemID = consistentHashing.getHash(itemID);
+                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false); // Determine the target server for this request
+
+                ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
+
+                // Forward the request to the server
+                ZMsg serverRequest = new ZMsg();
+                serverRequest.addString(header);
+                serverRequest.addString(itemID);
+                serverRequest.send(serverSocket);
+
+                // Wait for the server's response
+                ZMsg serverResponse = ZMsg.recvMsg(serverSocket);
+                if (serverResponse != null) {
+                    // Forward the response back to the client
+                    ZMsg clientResponse = new ZMsg();
+                    clientResponse.addString(clientIdentity);
+                    clientResponse.add(serverResponse.popString());
+                    clientResponse.send(clientRoutSocket);
+                }
+                serverSocket.close();
+            }
+
+            case "UPDATE" -> {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonData = request.popString();
+                ShoppingList item = null;
+                try {
+                    item = mapper.readValue(jsonData, ShoppingList.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+                String itemID = item.getId().toString();
+                int hashedItemID = consistentHashing.getHash(itemID);
+                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false);
+
+                ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
+
+                // Forward the request to the server
+                ZMsg serverRequest = new ZMsg();
+                serverRequest.addString(header);
+                serverRequest.addString(jsonData);
+                serverRequest.send(serverSocket);
+
+                // Wait for the server's response
+                ZMsg serverResponse = ZMsg.recvMsg(serverSocket);
+                if (serverResponse != null) {
+                    // Forward the response back to the client
+                    ZMsg clientResponse = new ZMsg();
+                    clientResponse.addString(clientIdentity);
+                    clientResponse.add(serverResponse.popString());
+                    clientResponse.send(clientRoutSocket);
+                }
+            }
+            case "DELETE_LIST" -> {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonData = request.popString();
+                ShoppingList item = null;
+                try {
+                    item = mapper.readValue(jsonData, ShoppingList.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+                String itemID = item.getId().toString();
+                int hashedItemID = consistentHashing.getHash(itemID);
+                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false);
+
+                ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
+
+                // Forward the request to the server
+                ZMsg serverRequest = new ZMsg();
+                serverRequest.addString(header);
+                serverRequest.addString(jsonData);
+                serverRequest.send(serverSocket);
+
+            }
+            default -> {
+                // Ignore other headers
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         try {
