@@ -149,7 +149,30 @@ public class Broker {
                     clientResponse.send(clientRoutSocket);
                 }
             }
+            case "DELETE_LIST" -> {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonData = request.popString();
+                ShoppingList item = null;
+                try {
+                    item = mapper.readValue(jsonData, ShoppingList.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
 
+                String itemID = item.getId().toString();
+                int hashedItemID = consistentHashing.getHash(itemID);
+                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false);
+
+                ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
+
+                // Forward the request to the server
+                ZMsg serverRequest = new ZMsg();
+                serverRequest.addString(header);
+                serverRequest.addString(jsonData);
+                serverRequest.send(serverSocket);
+
+            }
             default -> {
                 // Ignore other headers
             }

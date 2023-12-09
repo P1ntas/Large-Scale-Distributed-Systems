@@ -369,6 +369,20 @@ public class ServerNode {
                 rebalance();
                 replicate();
             }
+            case "DELETE_LIST" -> {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonData = request.popString();
+                ShoppingList item = null;
+                try {
+                    item = mapper.readValue(jsonData, ShoppingList.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+                String itemID = item.getId().toString();
+                this.shoppingLists.removeIf(shoppingList -> shoppingList.getId().toString().equals(itemID));
+
+            }
             default -> {
             }
             //ignore
