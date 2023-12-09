@@ -95,7 +95,7 @@
       "products" : [ {
         "name" : "Nails",
         "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-        "quantity" : 10,
+        "quantity" : 12,
         "vectorClock" : {
           "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
           "timestamp" : 1699889400000
@@ -117,7 +117,7 @@
       }, {
         "name" : "Hammer",
         "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-        "quantity" : 1,
+        "quantity" : 4,
         "vectorClock" : {
           "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
           "timestamp" : 1699889400000

@@ -1,5 +1,9 @@
 package com.shopup;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.zeromq.ZContext;
+import org.zeromq.ZMQ;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +16,9 @@ public class TerminalInterface {
     private BufferedReader reader;
     private User currentUser;
     private boolean connectToServer;
+    private Thread serverListenerThread;
+    private ZContext context;
+    private ZMQ.Socket socket;
 
     public TerminalInterface() {
         this.reader = new BufferedReader(new InputStreamReader(System.in));
@@ -172,12 +179,61 @@ public class TerminalInterface {
         //need to receive shopping list to add to local files
     }
 
+    private void startServerListener() {
+        serverListenerThread = new Thread(() -> {
+            try {
+                context = new ZContext();
+                socket = context.createSocket(ZMQ.SUB);
+                socket.connect("tcp://127.0.0.1:5001");
+                socket.subscribe("LIST_DATA".getBytes(ZMQ.CHARSET));
+
+                while (!Thread.currentThread().isInterrupted()) {
+                    String topic = socket.recvStr();
+                    if (topic.equals("LIST_UPDATE")) {
+                        String jsonData = socket.recvStr();
+                        ObjectMapper mapper = new ObjectMapper();
+                        try {
+                            ShoppingList shoppingList = mapper.readValue(jsonData, ShoppingList.class);
+                            currentUser.getShoppingLists().put(shoppingList.getId(), shoppingList);
+                            JSONHandler.writeToJSON(currentUser, false);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (socket != null) {
+                    socket.close();
+                }
+                if (context != null) {
+                    context.close();
+                }
+            }
+        });
+
+        serverListenerThread.start();
+    }
+
+    private void stopServerListener() {
+        if (serverListenerThread != null) {
+            serverListenerThread.interrupt();
+            serverListenerThread = null;
+        }
+    }
+
     private void toggleServerConnection() throws IOException {
         System.out.println("Would you like to change the server connection setting? (current: " + (connectToServer ? "connected" : "disconnected") + ")");
         String response = reader.readLine();
         if (response.equalsIgnoreCase("yes")) {
             connectToServer = !connectToServer;
             System.out.println("Server connection is now " + (connectToServer ? "enabled" : "disabled"));
+        }
+        if (connectToServer) {
+            startServerListener();
+        } else {
+            stopServerListener();
         }
     }
 

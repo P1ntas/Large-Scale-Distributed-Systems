@@ -21,7 +21,7 @@ public class JSONHandler {
         }
 
         if (server) fileName = "server/" + fileName;
-        else fileName = "shoppingList-backend/src/main/resources/" + fileName;
+        else fileName = "src/main/resources/" + fileName;
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -36,7 +36,7 @@ public class JSONHandler {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        String fileName = "shoppingList-backend/src/main/resources/" + user.getUsername() + ".json";
+        String fileName = "src/main/resources/" + user.getUsername() + ".json";
 
         if (server) {
             fileName = "server/" + user.getUsername() + ".json";
