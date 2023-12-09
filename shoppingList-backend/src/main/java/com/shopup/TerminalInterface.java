@@ -119,7 +119,7 @@ public class TerminalInterface {
                 System.out.println("Enter new quantity for Product:");
                 int newQuantity = Integer.parseInt(reader.readLine());
                 product.setName(newName);
-                product.setQuantity(newQuantity);
+                product.setQuantity(currentUser.getId(),newQuantity);
                 System.out.println("Product updated: " + product.getName());
             } else {
                 System.out.println("Product not found.");

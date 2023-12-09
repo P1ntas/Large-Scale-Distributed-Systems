@@ -17,12 +17,10 @@ public class PNCounter {
     }
 
     @JsonCreator
-    public PNCounter(@JsonProperty("positiveGCounter") Map<UUID,Integer> positiveGCounter,
-                     @JsonProperty("negativeGCounter") Map<UUID,Integer> negativeGCounter){
-        this.positiveGCounter = new GCounter();
-        this.negativeGCounter = new GCounter();
-        this.positiveGCounter.setCounter(positiveGCounter);
-        this.negativeGCounter.setCounter(negativeGCounter);
+    public PNCounter(@JsonProperty("positiveGCounter") GCounter positiveGCounter,
+                     @JsonProperty("negativeGCounter") GCounter negativeGCounter){
+        this.positiveGCounter = new GCounter(positiveGCounter.getCounter());
+        this.negativeGCounter = new GCounter(negativeGCounter.getCounter());
     }
 
     public GCounter getPositiveGCounter(){
@@ -54,8 +52,8 @@ public class PNCounter {
         negativeGCounter.merge(other.negativeGCounter);
     }
 
-    public int getValue(){
-        int value = positiveGCounter.getValue() - negativeGCounter.getValue();
+    public int calculateValue(){
+        int value = positiveGCounter.calculateValue() - negativeGCounter.calculateValue();
         return Math.max(value, 0);
     }
 

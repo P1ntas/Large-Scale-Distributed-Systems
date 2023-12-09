@@ -7,7 +7,11 @@ import static com.shopup.JSONHandler.readFromJSON;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        User user2 = readFromJSON("emily_clark.json", false);
+
+
+        TerminalInterface terminalInterface = new TerminalInterface();
+        terminalInterface.startInterface();
+        /*User user2 = readFromJSON("emily_clark.json", false);
         User user1 = readFromJSON("john_doe.json", false);
 
         System.out.println(user1.getUsername());
@@ -41,7 +45,7 @@ public class Main {
 
         for(Product product : user2.getShoppingListList().get(0).getProductList()){
             System.out.println(product.getName() + " - " + product.getQuantity());
-        }
+        }*/
 /*
         user1.getShoppingListList().get(0).getProductList().get(0).merge(user2.getShoppingListList().get(0).getProductList().get(0));
         user1.getShoppingListList().get(0).getProductList().get(1).merge(user2.getShoppingListList().get(0).getProductList().get(1));
@@ -72,7 +76,12 @@ public class Main {
             System.out.println("\n");
         }*/
 
-        user1.getShoppingListList().get(0).merge(user2.getShoppingListList().get(0),user2.getId());
+
+
+
+
+
+        /*user1.getShoppingListList().get(0).merge(user2.getShoppingListList().get(0),user2.getId());
         System.out.print("\nSUPOSTAMENTE ESTÁ MERGED\n\n");
         System.out.println(user1.getUsername());
         for (ShoppingList list : user1.getShoppingListList()){
@@ -91,7 +100,7 @@ public class Main {
             for(Product product : list.getProductList()){
                 System.out.println(product.getName() + " - " + product.getQuantity());
             }
-            System.out.println("\n");
+            System.out.println("\n");*/
         }
 
 
@@ -99,6 +108,6 @@ public class Main {
 
 
 
-    }
-
 }
+
+

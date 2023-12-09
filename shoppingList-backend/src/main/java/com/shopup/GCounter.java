@@ -1,5 +1,8 @@
 package com.shopup;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -11,6 +14,10 @@ public class GCounter {
     Map<UUID, Integer> counter;
     public GCounter(){
         this.counter = new HashMap<UUID,Integer>();
+    }
+    @JsonCreator
+    public GCounter(@JsonProperty("counter") Map<UUID,Integer> counter){
+        this.counter = counter;
     }
 
     public Map<UUID, Integer> getCounter() {
@@ -29,7 +36,7 @@ public class GCounter {
         counter.put(key, count + value);
     }
 
-    public int getValue(){
+    public int calculateValue(){
         int sum = 0;
         for(int i: counter.values()){
             sum+=i;

@@ -59,12 +59,14 @@ public class Product {
                    @JsonProperty("id") UUID id,
                    @JsonProperty("quantity") int quantity,
                    @JsonProperty("vectorClock") VectorClock vectorClock,
-                   @JsonProperty("counter") PNCounter pnCounter) {
+                   @JsonProperty("pnCounter") PNCounter pnCounter) {
         this.name = name;
         this.id = id != null ? id : UUID.randomUUID();
         this.quantity = quantity;
         this.vectorClock = vectorClock;
         this.pnCounter = pnCounter;
+
+
     }
 
     public UUID getId() {
@@ -76,7 +78,7 @@ public class Product {
     }
 
     public int getQuantity() {
-        return this.pnCounter.getValue();
+        return this.pnCounter.calculateValue();
     }
 
     public VectorClock getVectorClock() {
@@ -92,11 +94,15 @@ public class Product {
         this.name = name;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(UUID userID,int quantity) {
         if (quantity < 1) {
-            throw new IllegalArgumentException("Quantity cannot be negative");
+            System.out.println("Cannot add or decrement number smaller than 1");
         }
-        this.quantity = quantity;
+        if(this.quantity - quantity > 0){
+            decrementQuantity(userID, this.quantity - quantity);
+        }else{
+            incrementQuantity(userID,quantity - this.quantity);
+        }
     }
 
     public void setVectorClock(VectorClock vectorClock) {
@@ -107,12 +113,12 @@ public class Product {
 
     public void incrementQuantity(UUID userID, int added) {
         this.pnCounter.increment(userID, added);
-        this.quantity = this.pnCounter.getValue();
+        this.quantity = this.pnCounter.calculateValue();
     }
 
     public void decrementQuantity(UUID userID, int added) {
         this.pnCounter.decrement(userID, added);
-        this.quantity = this.pnCounter.getValue();
+        this.quantity = this.pnCounter.calculateValue();
     }
 
     public Product merge(Product other) {

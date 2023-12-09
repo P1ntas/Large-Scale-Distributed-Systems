@@ -34,6 +34,7 @@ public class User {
     public User(@JsonProperty("username") String username,
                 @JsonProperty("id") UUID id,
                 @JsonProperty("shoppingLists") List<ShoppingList> shoppingListArray) {
+
         this.username = username;
         this.id = id != null ? id : UUID.randomUUID();
         this.shoppingLists = new HashMap<>();
