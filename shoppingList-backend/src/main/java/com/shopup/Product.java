@@ -122,7 +122,7 @@ public class Product {
     }
 
     public Product merge(Product other) {
-        if (this.equals(other)) return this;
+        if (this.equals(other)) return null;
 
         this.vectorClock.setTimestamp(System.currentTimeMillis());
         other.getVectorClock().setTimestamp(System.currentTimeMillis());

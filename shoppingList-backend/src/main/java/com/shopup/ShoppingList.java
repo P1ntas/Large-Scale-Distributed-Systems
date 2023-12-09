@@ -19,6 +19,12 @@ class ShoppingList {
         this.products = new HashMap<>();
     }
 
+    public ShoppingList(String name, UUID id) {
+        this.id = id;
+        this.name = name;
+        this.products = new HashMap<>();
+    }
+
     public ShoppingList(String name, UUID id, HashMap<UUID, Product> products) {
         this.id = id;
         this.name = name;
@@ -90,20 +96,48 @@ class ShoppingList {
         return Objects.hash(getId(), getName(), getProducts());
     }
 
-    public ShoppingList merge(ShoppingList other, UUID userId) {
+    public ShoppingList merge(ShoppingList other) {
         if (this.equals(other)) return this;
+
+        ShoppingList newShoppingList = new ShoppingList(this.getName(), this.getId());
 
         /* for each product in products use the merge function of the Product class to merge products of this and other with the same id */
         for (Product product : this.products.values()) {
             if (other.products.containsKey(product.getId())) {
-                product.merge(other.products.get(product.getId()));
+                if (product.merge(other.products.get(product.getId())) != null){
+                    newShoppingList.addProduct(product);
+                }
+
             }else{
-                Product newProduct = new Product(product.getName(), userId, 0, System.currentTimeMillis());
-                addProduct(product);
-                product.merge(other.products.get(product.getId()));
+                Product newProduct = new Product(product.getName(), product.getId(), 0, System.currentTimeMillis());
+                other.addProduct(newProduct);
+                if (product.merge(other.products.get(product.getId())) != null){
+                    newShoppingList.addProduct(product);
+                }
+
             }
         }
 
-        return this;
+        for(Product product : other.getProducts().values()){
+            if (this.products.containsKey(product.getId())) {
+                if (product.merge(other.products.get(product.getId())) != null){
+                    newShoppingList.addProduct(product);
+                }
+            }else{
+                Product newProduct = new Product(product.getName(), product.getId(), 0, System.currentTimeMillis());
+                addProduct(newProduct);
+                if (product.merge(other.products.get(product.getId())) != null){
+                    newShoppingList.addProduct(product);
+                }
+            }
+        }
+
+/*
+        System.out.println("THIS PRINT IS TESTING INSIDE THE SHOPPING LIST MERGE");
+        for(Product product : newShoppingList.getProductList()){
+            System.out.println(product.getName() + ": " + product.getQuantity());
+        }*/
+
+        return newShoppingList;
     }
 }
