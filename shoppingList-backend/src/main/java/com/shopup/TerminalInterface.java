@@ -104,7 +104,7 @@ public class TerminalInterface {
             String productName = reader.readLine();
             System.out.println("Enter the quantity for the product:");
             int quantity = Integer.parseInt(reader.readLine());
-            Product newProduct = new Product(productName, quantity);
+            Product newProduct = new Product(productName, currentUser.getId(), quantity);
             list.addProduct(newProduct);
             System.out.println("Product added: " + newProduct.getName());
         } else {

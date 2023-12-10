@@ -40,6 +40,9 @@ public class Main {
 
         user1.getShoppingListList().get(0).getProductList().get(0).incrementQuantity(user1.getId(),1);
         user2.getShoppingListList().get(0).getProductList().get(1).decrementQuantity(user2.getId(),1);
+        user1.getShoppingListList().get(0).addProduct(new Product("Bananas",user1.getId(),3));
+        user2.getShoppingListList().get(0).addProduct(new Product("Coke",user2.getId(),1));
+
 
         for(Product product : user1.getShoppingListList().get(0).getProductList()){
             System.out.println(product.getName() + " - " + product.getQuantity());
@@ -50,7 +53,10 @@ public class Main {
         }
 
 
-
+        System.out.println("\nVAI COMEÇAR O MERGE\n");
+        user1.getShoppingListList().get(0).merge(user2.getShoppingListList().get(0));
+        System.out.println("\n\n\n\n\n\nNOMEEEEEE: " + user2.getShoppingListList().get(0).getProductList().get(2).getName());
+        user2.getShoppingListList().get(0).getProductList().get(2).incrementQuantity(user2.getId(),1);
         user1.getShoppingListList().get(0).merge(user2.getShoppingListList().get(0));
 
         System.out.println("VOU DAR PRINT E REZAR QUE TENHA DADO MERGE");

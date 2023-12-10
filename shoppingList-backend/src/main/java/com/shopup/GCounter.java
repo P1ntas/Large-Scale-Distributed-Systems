@@ -15,6 +15,11 @@ public class GCounter {
     public GCounter(){
         this.counter = new HashMap<UUID,Integer>();
     }
+
+    public GCounter(UUID userId){
+        this.counter = new HashMap<UUID,Integer>();
+        this.counter.put(userId,0);
+    }
     @JsonCreator
     public GCounter(@JsonProperty("counter") Map<UUID,Integer> counter){
         this.counter = counter;
@@ -47,7 +52,6 @@ public class GCounter {
     public void merge(GCounter gCounter2){
         for(Map.Entry<UUID,Integer> x: gCounter2.counter.entrySet()){
             UUID id = x.getKey();
-
             //Select the maximum value from each key in the hashmap, if it doesn't exists just insert the upcoming value
             if(counter.containsKey(id)){
                 counter.put(id,max(x.getValue(),counter.get(id)));
@@ -55,17 +59,20 @@ public class GCounter {
             }
             else{
                 counter.put(id,x.getValue());
+                gCounter2.getCounter().put(id,x.getValue());
             }
         }
 
+        for(Map.Entry<UUID,Integer> x: counter.entrySet()) {
+            System.out.println("ID: " + x.getKey() + " Counter: " + x.getValue());
+        }
+
+        for(Map.Entry<UUID,Integer> x: gCounter2.getCounter().entrySet()) {
+            System.out.println("ID2: " + x.getKey() + " Counter2: " + x.getValue());
+        }
+
     }
-
-
-
-
-
-
-
+    
 
 
 /*    @Override
