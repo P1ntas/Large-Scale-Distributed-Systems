@@ -354,7 +354,8 @@ public class ServerNode {
                 String itemID = clientList.getId().toString();
                 for (ShoppingList shoppingList : this.shoppingLists){
                     if(shoppingList.getId().toString().equals(itemID)){
-                        updatedList = shoppingList.merge(clientList);
+                        shoppingList.merge(clientList);
+                        updatedList = shoppingList;
                     }
                 }
                 if(updatedList == null){
