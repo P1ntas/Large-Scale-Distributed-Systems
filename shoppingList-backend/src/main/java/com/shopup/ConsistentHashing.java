@@ -6,13 +6,18 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 public class ConsistentHashing {
     private final int n_virtulisation;
+    private final int n_replication;
     private final MessageDigest md;
 
-    public ConsistentHashing(int n_virtulisation) throws NoSuchAlgorithmException {
+    public ConsistentHashing(int n_virtulisation, int n_replication) throws NoSuchAlgorithmException {
         this.n_virtulisation = n_virtulisation;
+        this.n_replication = n_replication;
         this.md = MessageDigest.getInstance("MD5");
     }
 
+    public int getN_replication(){
+        return this.n_replication;
+    }
     public void addServer(String server, TreeMap<Integer, String> ring) {
         int hash = getHash(server);
         ring.put(hash, server);
@@ -21,8 +26,6 @@ public class ConsistentHashing {
             hash = getHash(server + i);
             ring.put(hash, server);
         }
-        System.out.println("ADDING SERVER " + server);
-        
         System.out.println("RING UPDATED + : " + ring);
     }
 
@@ -52,10 +55,8 @@ public class ConsistentHashing {
         int random1 = getHash(key);
         int random2 = getHash(key);
         if(ring.isEmpty()){
-            System.out.println("RING IS EMPTY, RETURNING NULL");
             return null;
         }
-        System.out.println("SEARCHING FOR SERVER");
         int hash = getHash(key);
         SortedMap<Integer, String> tailMap;
         if(isServer){
@@ -66,17 +67,15 @@ public class ConsistentHashing {
         }
 
         if (!tailMap.isEmpty()) {
-            System.out.println("FOUND SERVER: " + tailMap.get(tailMap.firstKey()));
             return tailMap.get(tailMap.firstKey());
         }
         else if(isServer && ring.size() == 1 && ring.containsKey(hash)){
-            System.out.println("SERVER IS THE ONLY NODE IN THE RING, RETURNING NULL");
             return null;
         }
         return ring.get(ring.firstKey());
     }
 
-    private int getHash(Object key) {
+    int getHash(Object key) {
 
         this.md.update(key.toString().getBytes(StandardCharsets.UTF_8));
         byte[] bytes = this.md.digest();
