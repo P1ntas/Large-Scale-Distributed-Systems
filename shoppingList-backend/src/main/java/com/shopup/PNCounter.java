@@ -53,9 +53,7 @@ public class PNCounter {
     }
 
     public void merge(PNCounter other){
-        System.out.println("Positive counter");
         positiveGCounter.merge(other.positiveGCounter);
-        System.out.println("Negative counter");
         negativeGCounter.merge(other.negativeGCounter);
     }
 

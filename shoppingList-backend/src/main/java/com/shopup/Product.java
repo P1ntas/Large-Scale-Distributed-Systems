@@ -96,12 +96,24 @@ public class Product {
     public void setQuantity(UUID userID,int quantity) {
         if (quantity < 1) {
             System.out.println("Cannot add or decrement number smaller than 1");
+            return;
+        } else if (quantity == getQuantity()) {
+            System.out.println("Your input is the same has the product quatity");
         }
-        if(this.quantity - quantity > 0){
+
+        System.out.println("ESTA É A NOVA QUANTIDADE: "+ quantity);
+
+        if(quantity < getQuantity()){
             decrementQuantity(userID, this.quantity - quantity);
         }else{
             incrementQuantity(userID,quantity - this.quantity);
         }
+
+/*        if(this.quantity - quantity > 0){
+            decrementQuantity(userID, this.quantity - quantity);
+        }else{
+            incrementQuantity(userID,quantity - this.quantity);
+        }*/
     }
 
     public void setVectorClock(VectorClock vectorClock) {
@@ -118,6 +130,10 @@ public class Product {
     public void decrementQuantity(UUID userID, int added) {
         this.pnCounter.decrement(userID, added);
         this.quantity = this.pnCounter.calculateValue();
+    }
+
+    public void removeProduct(UUID userId) {
+        decrementQuantity(userId,this.getQuantity());
     }
 
     public Product merge(Product other) {

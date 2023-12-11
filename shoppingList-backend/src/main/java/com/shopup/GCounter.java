@@ -63,19 +63,9 @@ public class GCounter {
             }
         }
 
-        for(Map.Entry<UUID,Integer> x: counter.entrySet()) {
-            System.out.println("ID: " + x.getKey() + " Counter: " + x.getValue());
-        }
-
-        for(Map.Entry<UUID,Integer> x: gCounter2.getCounter().entrySet()) {
-            System.out.println("ID2: " + x.getKey() + " Counter2: " + x.getValue());
-        }
-
     }
-    
 
-
-/*    @Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GCounter gCounter)) return false;
@@ -85,5 +75,5 @@ public class GCounter {
     @Override
     public int hashCode() {
         return Objects.hash(getCounter());
-    }*/
+    }
 }

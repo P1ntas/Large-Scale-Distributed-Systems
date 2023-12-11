@@ -55,6 +55,14 @@ public class TerminalInterface {
         });
     }
 
+    private void printShoppingList(ShoppingList list){
+        System.out.println("Products in " + list.getName() + ":");
+        list.getProducts().forEach((id, product) -> {
+            if(product.getQuantity() != 0)
+                System.out.println("ID: " + id + ", Name: " + product.getName() + ", Quantity: " + product.getQuantity());
+        });
+    }
+
     private ShoppingList addShoppingList() throws IOException {
         System.out.println("Enter name for new Shopping List:");
         String name = reader.readLine();
@@ -95,6 +103,8 @@ public class TerminalInterface {
     }
 
     private ShoppingList addProductToShoppingList() throws IOException {
+
+        displayShoppingLists();
         System.out.println("Enter ID of Shopping List to add product:");
         UUID listId = UUID.fromString(reader.readLine());
         ShoppingList list = currentUser.getShoppingLists().get(listId);
@@ -104,6 +114,15 @@ public class TerminalInterface {
             String productName = reader.readLine();
             System.out.println("Enter the quantity for the product:");
             int quantity = Integer.parseInt(reader.readLine());
+
+            //In case the product exists but quantity equals 0
+            for(Product product : list.getProducts().values()){
+                if(Objects.equals(product.getName(), productName)){
+                    product.incrementQuantity(currentUser.getId(),quantity);
+                    return list;
+                }
+            }
+
             Product newProduct = new Product(productName, currentUser.getId(), quantity);
             list.addProduct(newProduct);
             System.out.println("Product added: " + newProduct.getName());
@@ -114,28 +133,40 @@ public class TerminalInterface {
     }
 
     private ShoppingList editProductInShoppingList() throws IOException {
+        displayShoppingLists();
         System.out.println("Enter ID of Shopping List:");
         UUID listId = UUID.fromString(reader.readLine());
         ShoppingList list = currentUser.getShoppingLists().get(listId);
 
         if (list != null) {
 
-            System.out.println("Products in " + list.getName() + ":");
-            list.getProducts().forEach((id, product) -> {
-                System.out.println("ID: " + id + ", Name: " + product.getName() + ", Quantity: " + product.getQuantity());
-            });
+            printShoppingList(list);
 
             System.out.println("Enter ID of Product to edit:");
             UUID productId = UUID.fromString(reader.readLine());
             Product product = list.getProducts().get(productId);
 
             if (product != null) {
-                System.out.println("Enter new name for Product:");
-                String newName = reader.readLine();
-                System.out.println("Enter new quantity for Product:");
-                int newQuantity = Integer.parseInt(reader.readLine());
-                product.setName(newName);
-                product.setQuantity(currentUser.getId(),newQuantity);
+                System.out.println("1. Change product name\n2. Change product value");
+                int changeInput = Integer.parseInt(reader.readLine());
+
+                while(changeInput < 1 || changeInput > 2){
+                    System.out.println("Please input a valid number");
+                    changeInput = Integer.parseInt(reader.readLine());
+                }
+
+                switch (changeInput){
+                    case 1:
+                        System.out.println("Enter new name for Product:");
+                        String newName = reader.readLine();
+                        product.setName(newName);
+                    case 2:
+                        System.out.println("Enter new quantity for Product:");
+                        int newQuantity = Integer.parseInt(reader.readLine());
+
+                        product.setQuantity(currentUser.getId(),newQuantity);
+                }
+
                 System.out.println("Product updated: " + product.getName());
             } else {
                 System.out.println("Product not found.");
@@ -147,14 +178,18 @@ public class TerminalInterface {
     }
 
     private ShoppingList deleteProductFromShoppingList() throws IOException {
+        displayShoppingLists();
         System.out.println("Enter ID of Shopping List:");
         UUID listId = UUID.fromString(reader.readLine());
         ShoppingList list = currentUser.getShoppingLists().get(listId);
 
         if (list != null) {
+            printShoppingList(list);
+
             System.out.println("Enter ID of Product to delete:");
             UUID productId = UUID.fromString(reader.readLine());
-            if (list.getProducts().remove(productId) != null) {
+            if (list.getProducts().containsKey(productId)) {
+                list.getProducts().get(productId).removeProduct(currentUser.getId());
                 System.out.println("Product deleted.");
             } else {
                 System.out.println("Product not found.");
@@ -166,15 +201,13 @@ public class TerminalInterface {
     }
 
     private void viewProductsInShoppingList() throws IOException {
+        displayShoppingLists();
         System.out.println("Enter ID of Shopping List:");
         UUID listId = UUID.fromString(reader.readLine());
         ShoppingList list = currentUser.getShoppingLists().get(listId);
 
         if (list != null) {
-            System.out.println("Products in " + list.getName() + ":");
-            list.getProducts().forEach((id, product) -> {
-                System.out.println("ID: " + id + ", Name: " + product.getName() + ", Quantity: " + product.getQuantity());
-            });
+            printShoppingList(list);
         } else {
             System.out.println("Shopping List not found.");
         }
@@ -251,7 +284,7 @@ public class TerminalInterface {
             loadUser();
 
             while (true) {
-                System.out.println("\nChoose an action: \n1. Display Shopping Lists \n2. Add Shopping List \n3. Edit Shopping List \n4. Delete Shopping List \n5. Add Product to Shopping List \n6. Edit Product in Shopping List \n7. Delete Product from Shopping List \n8. View Products in Shopping List \n9. Add Existing Shopping List to User \n10 Toggle Server Connection \n11. Exit");
+                System.out.println("\nChoose an action: \n1. Display Shopping Lists \n2. Add Shopping List \n3. Edit Shopping List name \n4. Delete Shopping List \n5. Add Product to Shopping List \n6. Edit Product in Shopping List \n7. Delete Product from Shopping List \n8. View Products in Shopping List \n9. Add Existing Shopping List to User \n10 Toggle Server Connection \n11. Exit");
                 String choice = reader.readLine();
                 ShoppingList list;
 

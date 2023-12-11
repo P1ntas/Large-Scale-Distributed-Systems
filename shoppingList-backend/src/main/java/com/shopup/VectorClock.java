@@ -34,7 +34,7 @@ class VectorClock {
         this.timestamp = timestamp;
     }
 
-    public void updateClock(UUID nodeId, int timestamp) {
+/*    public void updateClock(UUID nodeId, int timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -48,7 +48,7 @@ class VectorClock {
 
     public boolean isEqual(VectorClock other) {
         return this.timestamp == other.timestamp;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {
