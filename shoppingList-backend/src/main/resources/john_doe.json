@@ -2,58 +2,48 @@
   "username" : "john_doe",
   "id" : "fafd2105-86ef-4653-9915-8960ccb09a68",
   "shoppingLists" : [ {
-    "name" : "School Supplies",
-    "id" : "52b5ad86-acc8-43fc-8aa0-a8aaa0e40658",
+    "name" : "LIST",
+    "id" : "0a9f62d6-1b7b-4958-876b-48799bbd2ea5",
     "products" : [ ]
   }, {
-    "name" : "Hardware",
-    "id" : "f81f9cfb-219d-44d5-87d0-53a99e28e03f",
+    "name" : "Home Decor",
+    "id" : "5e62fae3-c411-4236-9e0a-160d41fced2c",
+    "products" : [ ]
+  }, {
+    "name" : "PLEASE",
+    "id" : "d262750b-90e8-4c55-ad84-4609596c2d64",
+    "products" : [ ]
+  }, {
+    "name" : "SERVERTEST",
+    "id" : "09b3f243-5dfc-438a-b8ae-da1ce918ab0a",
+    "products" : [ ]
+  }, {
+    "name" : "TESTE1",
+    "id" : "83950d10-d32a-466b-ad7a-c0a22e06be72",
+    "products" : [ ]
+  }, {
+    "name" : "Gardening",
+    "id" : "dde4843f-4c3c-43d8-a34c-8310e2aea090",
     "products" : [ {
-      "name" : "Nail",
-      "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-      "quantity" : 0,
+      "name" : "Flower Pot",
+      "id" : "64d00405-0597-44f2-81f3-66313387002a",
+      "quantity" : 10,
       "vectorClock" : {
-        "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-        "timestamp" : 1702263419834
+        "id" : "64d00405-0597-44f2-81f3-66313387002a",
+        "timestamp" : 1702275101946
       },
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 27
           }
         },
         "negativeGCounter" : {
           "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
-          }
-        }
-      }
-    }, {
-      "name" : "Hammer",
-      "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-      "quantity" : 0,
-      "vectorClock" : {
-        "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-        "timestamp" : 1702263419834
-      },
-      "pnCounter" : {
-        "positiveGCounter" : {
-          "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 4
-          }
-        },
-        "negativeGCounter" : {
-          "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 4
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 17
           }
         }
       }
     } ]
-  }, {
-    "name" : "Pet Food",
-    "id" : "5e467bb5-56d5-4f01-86b8-7aed945af2d6",
-    "products" : [ ]
   } ]
 }

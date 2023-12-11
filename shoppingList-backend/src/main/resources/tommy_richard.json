@@ -1,0 +1,29 @@
+{
+  "username" : "tommy_richard",
+  "id" : "cd8b7d1a-ebfb-42ef-bb67-be42f4e2d25e",
+  "shoppingLists" : [ {
+    "name" : "gardening",
+    "id" : "f5da659d-1f89-4cf9-9fcf-adbf5b1aca15",
+    "products" : [ {
+      "name" : "flower pot",
+      "id" : "a03f6037-174f-42da-9616-0fbc341715b9",
+      "quantity" : 8,
+      "vectorClock" : {
+        "id" : "a03f6037-174f-42da-9616-0fbc341715b9",
+        "timestamp" : 1702278388738
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "cd8b7d1a-ebfb-42ef-bb67-be42f4e2d25e" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "cd8b7d1a-ebfb-42ef-bb67-be42f4e2d25e" : 2
+          }
+        }
+      }
+    } ]
+  } ]
+}

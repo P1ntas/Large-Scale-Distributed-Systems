@@ -1,0 +1,53 @@
+{
+  "username" : "test2",
+  "id" : "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c",
+  "shoppingLists" : [ {
+    "name" : "help",
+    "id" : "7985881c-ca38-4218-8086-a46f0aea915a",
+    "products" : [ {
+      "name" : "Block",
+      "id" : "89d30751-d614-4a3a-97ee-4be2de7a804e",
+      "quantity" : 10,
+      "vectorClock" : {
+        "id" : "89d30751-d614-4a3a-97ee-4be2de7a804e",
+        "timestamp" : 1702278809494
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c" : 0
+          }
+        }
+      }
+    } ]
+  }, {
+    "name" : "test",
+    "id" : "7603f4ee-8e59-4aca-b47f-685144c05ce3",
+    "products" : [ {
+      "name" : "Ball",
+      "id" : "20d9779e-e0b9-4632-a6fc-5a0483280b50",
+      "quantity" : 3,
+      "vectorClock" : {
+        "id" : "20d9779e-e0b9-4632-a6fc-5a0483280b50",
+        "timestamp" : 1702278695793
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c" : 3
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c" : 0
+          }
+        }
+      }
+    } ]
+  } ]
+}

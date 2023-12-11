@@ -226,7 +226,7 @@ public class TerminalInterface {
         }
         else{
             this.currentUser.getShoppingLists().put(newList.getId(), newList);
-            System.out.println("New list (" + newList.getName() + ") added to the client. " + this.currentUser.getShoppingLists());
+            System.out.println("New list (" + newList.getName() + ") added. " + this.currentUser.getShoppingLists());
         }
         //need to receive shopping list to add to local files
     }

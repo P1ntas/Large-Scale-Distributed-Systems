@@ -80,7 +80,7 @@ class ShoppingList {
     public void addProduct(Product newProduct) {
         for (Product product : this.products.values()){
             if (Objects.equals(product.getName(), newProduct.getName())){
-                System.out.println("Encontrei um antigo");
+
                 for (Map.Entry<UUID,Integer> entry : newProduct.getPnCounter().getPositiveGCounter().getCounter().entrySet()){
                     System.out.println("ID: " + entry.getKey() + " value: " + entry.getValue());
                 }
@@ -88,7 +88,7 @@ class ShoppingList {
                 return;
             }
         }
-        System.out.println("MAS PASSOU NA MESMA");
+
         this.products.put(newProduct.getId(), newProduct);
     }
 

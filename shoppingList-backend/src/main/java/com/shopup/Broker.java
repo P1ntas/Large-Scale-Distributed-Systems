@@ -8,6 +8,7 @@ import org.zeromq.ZMsg;
 import org.zeromq.ZMQ.Poller;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalTime;
 import java.util.TreeMap;
 import org.zeromq.SocketType;
 
@@ -77,6 +78,8 @@ public class Broker {
                 System.out.println("\nSERVER REMOVED: " + ring);
                 server = request.popString();
                 consistentHashing.removeServer(server, ring);
+                response.addString("ACK");
+                response.send(serverRoutSocket);
             }
             default -> {
                 System.out.println("UNKNOWN MESSAGE HEADER:" + header);
@@ -99,6 +102,7 @@ public class Broker {
                 String targetServer = consistentHashing.getServerAfter(itemID, ring, false); // Determine the target server for this request
 
                 ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.setIdentity(LocalTime.now().toString().getBytes());
                 serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
 
                 // Forward the request to the server
@@ -140,6 +144,7 @@ public class Broker {
                 String targetServer = consistentHashing.getServerAfter(itemID, ring, false);
 
                 ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.setIdentity(LocalTime.now().toString().getBytes());
                 serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
                 System.out.println("TARGET: " + targetServer.substring(0, targetServer.length() - 1) + "1");
                 // Forward the request to the server
@@ -180,6 +185,7 @@ public class Broker {
                 String targetServer = consistentHashing.getServerAfter(itemID, ring, false);
 
                 ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
+                serverSocket.setIdentity(LocalTime.now().toString().getBytes());
                 serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
 
                 // Forward the request to the server
@@ -188,6 +194,7 @@ public class Broker {
                 serverRequest.addString(jsonData);
                 System.out.println("\nRESPONSE SENT: " + serverRequest);
                 serverRequest.send(serverSocket);
+                ZMsg.recvMsg(serverSocket);
                 serverSocket.close();
 
             }

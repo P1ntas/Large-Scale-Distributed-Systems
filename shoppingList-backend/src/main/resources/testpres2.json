@@ -1,0 +1,50 @@
+{
+  "username" : "testpres2",
+  "id" : "f1017a69-b6f5-4cbf-885e-fdd864f1041d",
+  "shoppingLists" : [ {
+    "name" : "testpres",
+    "id" : "72e1f61f-eb5a-4558-b457-4f1b2b84a96a",
+    "products" : [ {
+      "name" : "Pyramid",
+      "id" : "26c02177-d5de-4825-bbdd-0b64c3375c33",
+      "quantity" : 20,
+      "vectorClock" : {
+        "id" : "26c02177-d5de-4825-bbdd-0b64c3375c33",
+        "timestamp" : 1702279851965
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "f1017a69-b6f5-4cbf-885e-fdd864f1041d" : 20
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "f1017a69-b6f5-4cbf-885e-fdd864f1041d" : 0
+          }
+        }
+      }
+    }, {
+      "name" : "Block",
+      "id" : "95765ec7-fbd9-48be-ac1e-9a701867d8f9",
+      "quantity" : 50,
+      "vectorClock" : {
+        "id" : "95765ec7-fbd9-48be-ac1e-9a701867d8f9",
+        "timestamp" : 1702279851965
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "c7bc82fe-72a5-4384-b26c-ff22ed9d7eed" : 10,
+            "f1017a69-b6f5-4cbf-885e-fdd864f1041d" : 40
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "c7bc82fe-72a5-4384-b26c-ff22ed9d7eed" : 0
+          }
+        }
+      }
+    } ]
+  } ]
+}

@@ -98,10 +98,8 @@ public class Product {
             System.out.println("Cannot add or decrement number smaller than 1");
             return;
         } else if (quantity == getQuantity()) {
-            System.out.println("Your input is the same has the product quatity");
+            System.out.println("Your input is the same as the product quatity");
         }
-
-        System.out.println("ESTA É A NOVA QUANTIDADE: "+ quantity);
 
         if(quantity < getQuantity()){
             decrementQuantity(userID, this.quantity - quantity);

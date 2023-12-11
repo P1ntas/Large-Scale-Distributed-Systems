@@ -1,0 +1,54 @@
+{
+  "username" : "test1",
+  "id" : "09a9a0e3-9c21-48d5-ab19-3e091e287097",
+  "shoppingLists" : [ {
+    "name" : "help",
+    "id" : "7985881c-ca38-4218-8086-a46f0aea915a",
+    "products" : [ {
+      "name" : "Block",
+      "id" : "89d30751-d614-4a3a-97ee-4be2de7a804e",
+      "quantity" : 3,
+      "vectorClock" : {
+        "id" : "89d30751-d614-4a3a-97ee-4be2de7a804e",
+        "timestamp" : 1702278870696
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "3c1bda57-0b4c-4fb4-8c1f-0c7ac6bd534c" : 0,
+            "09a9a0e3-9c21-48d5-ab19-3e091e287097" : 7
+          }
+        }
+      }
+    }, {
+      "name" : "Sphere",
+      "id" : "4668c362-c519-4f4b-8c68-11c2d15d3159",
+      "quantity" : 3,
+      "vectorClock" : {
+        "id" : "4668c362-c519-4f4b-8c68-11c2d15d3159",
+        "timestamp" : 1702278870697
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "09a9a0e3-9c21-48d5-ab19-3e091e287097" : 3
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "09a9a0e3-9c21-48d5-ab19-3e091e287097" : 0
+          }
+        }
+      }
+    } ]
+  }, {
+    "name" : "test",
+    "id" : "7603f4ee-8e59-4aca-b47f-685144c05ce3",
+    "products" : [ ]
+  } ]
+}

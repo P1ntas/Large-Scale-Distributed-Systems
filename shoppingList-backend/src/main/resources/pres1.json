@@ -1,0 +1,29 @@
+{
+  "username" : "pres1",
+  "id" : "c7bc82fe-72a5-4384-b26c-ff22ed9d7eed",
+  "shoppingLists" : [ {
+    "name" : "testpres",
+    "id" : "72e1f61f-eb5a-4558-b457-4f1b2b84a96a",
+    "products" : [ {
+      "name" : "Block",
+      "id" : "95765ec7-fbd9-48be-ac1e-9a701867d8f9",
+      "quantity" : 10,
+      "vectorClock" : {
+        "id" : "95765ec7-fbd9-48be-ac1e-9a701867d8f9",
+        "timestamp" : 1702279810157
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "c7bc82fe-72a5-4384-b26c-ff22ed9d7eed" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "c7bc82fe-72a5-4384-b26c-ff22ed9d7eed" : 0
+          }
+        }
+      }
+    } ]
+  } ]
+}

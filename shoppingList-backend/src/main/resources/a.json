@@ -1,0 +1,29 @@
+{
+  "username" : "a",
+  "id" : "a0436b9a-ec47-428f-ade1-21db801d2f5b",
+  "shoppingLists" : [ {
+    "name" : "l",
+    "id" : "546eca38-94d2-4b0b-816a-d7a01e88a779",
+    "products" : [ {
+      "name" : "item",
+      "id" : "22cf4fe7-c322-436d-8f56-8dbcea17cf4b",
+      "quantity" : 10,
+      "vectorClock" : {
+        "id" : "22cf4fe7-c322-436d-8f56-8dbcea17cf4b",
+        "timestamp" : 1702279122059
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "a0436b9a-ec47-428f-ade1-21db801d2f5b" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "a0436b9a-ec47-428f-ade1-21db801d2f5b" : 0
+          }
+        }
+      }
+    } ]
+  } ]
+}

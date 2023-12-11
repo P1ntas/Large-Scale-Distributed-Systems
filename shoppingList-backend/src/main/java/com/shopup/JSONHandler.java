@@ -53,7 +53,7 @@ public class JSONHandler {
         ObjectMapper mapper = new ObjectMapper();
         try (ZContext context = new ZContext()) {
             try (ZMQ.Socket socket = context.createSocket(SocketType.REQ)) {
-                System.out.println("IDENTITY: " + Arrays.toString(identity.getBytes()));
+
                 socket.setIdentity(identity.getBytes());
 
                 socket.connect("tcp://127.0.0.1:5001");
@@ -91,7 +91,7 @@ public class JSONHandler {
         try (ZContext context = new ZContext()) {
             try (ZMQ.Socket socket = context.createSocket(SocketType.REQ)) {
                 socket.setIdentity(identity.getBytes());
-                System.out.println("IDENTITY: " + Arrays.toString(identity.getBytes()));
+
                 socket.connect("tcp://127.0.0.1:5001");
                 ZMsg msg = new ZMsg();
 

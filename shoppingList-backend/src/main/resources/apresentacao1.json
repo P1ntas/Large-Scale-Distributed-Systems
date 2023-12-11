@@ -1,0 +1,29 @@
+{
+  "username" : "apresentacao1",
+  "id" : "db27b55f-c5ba-4647-8f93-87067ff425a9",
+  "shoppingLists" : [ {
+    "name" : "pres1",
+    "id" : "f26c2a70-b6d4-4a21-ac70-f4f2fbfe6319",
+    "products" : [ {
+      "name" : "Prod",
+      "id" : "dc5fb676-49b7-4312-bba3-520329e78a4e",
+      "quantity" : 10,
+      "vectorClock" : {
+        "id" : "dc5fb676-49b7-4312-bba3-520329e78a4e",
+        "timestamp" : 1702280045993
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "db27b55f-c5ba-4647-8f93-87067ff425a9" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "db27b55f-c5ba-4647-8f93-87067ff425a9" : 0
+          }
+        }
+      }
+    } ]
+  } ]
+}

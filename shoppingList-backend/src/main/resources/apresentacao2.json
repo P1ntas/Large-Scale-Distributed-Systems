@@ -1,0 +1,50 @@
+{
+  "username" : "apresentacao2",
+  "id" : "735b4d52-2b60-4bae-b64c-4ab5b1298378",
+  "shoppingLists" : [ {
+    "name" : "pres1",
+    "id" : "f26c2a70-b6d4-4a21-ac70-f4f2fbfe6319",
+    "products" : [ {
+      "name" : "Prod",
+      "id" : "dc5fb676-49b7-4312-bba3-520329e78a4e",
+      "quantity" : 40,
+      "vectorClock" : {
+        "id" : "dc5fb676-49b7-4312-bba3-520329e78a4e",
+        "timestamp" : 1702280101768
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "db27b55f-c5ba-4647-8f93-87067ff425a9" : 10,
+            "735b4d52-2b60-4bae-b64c-4ab5b1298378" : 30
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "db27b55f-c5ba-4647-8f93-87067ff425a9" : 0
+          }
+        }
+      }
+    }, {
+      "name" : "circle",
+      "id" : "151177c1-6d8c-444e-9f80-dc06efc076ea",
+      "quantity" : 10,
+      "vectorClock" : {
+        "id" : "151177c1-6d8c-444e-9f80-dc06efc076ea",
+        "timestamp" : 1702280101768
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "735b4d52-2b60-4bae-b64c-4ab5b1298378" : 10
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "735b4d52-2b60-4bae-b64c-4ab5b1298378" : 0
+          }
+        }
+      }
+    } ]
+  } ]
+}
