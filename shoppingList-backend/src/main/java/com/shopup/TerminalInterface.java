@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import java.time.LocalTime;
+
 import static com.shopup.JSONHandler.*;
 
 public class TerminalInterface {
@@ -184,7 +186,15 @@ public class TerminalInterface {
         System.out.println("Enter ID of the existing Shopping List to add:");
         UUID listId = UUID.fromString(reader.readLine());
 
-        sendListToServer(listId);
+        ShoppingList newList = sendListToServer(listId, this.currentUser.getUsername());
+
+        if(newList == null){
+            System.out.println("Requested list not stored in the cloud.");
+        }
+        else{
+            this.currentUser.getShoppingLists().put(newList.getId(), newList);
+            System.out.println("New list (" + newList.getName() + ") added to the client. " + this.currentUser.getShoppingLists());
+        }
         //need to receive shopping list to add to local files
     }
 
@@ -233,16 +243,11 @@ public class TerminalInterface {
     }
 
     private void toggleServerConnection() throws IOException {
-        System.out.println("Would you like to change the server connection setting? (current: " + (connectToServer ? "connected" : "disconnected") + ")");
+        System.out.println("Would you like to change the server connection setting (yes)? (current: " + (connectToServer ? "connected" : "disconnected") + ")");
         String response = reader.readLine();
         if (response.equalsIgnoreCase("yes")) {
             connectToServer = !connectToServer;
             System.out.println("Server connection is now " + (connectToServer ? "enabled" : "disabled"));
-        }
-        if (connectToServer) {
-            startServerListener();
-        } else {
-            stopServerListener();
         }
     }
 
@@ -256,53 +261,68 @@ public class TerminalInterface {
                 ShoppingList list;
 
                 switch (choice) {
-                    case "1":
-                        displayShoppingLists();
-                        break;
-                    case "2":
+                    case "1" -> displayShoppingLists();
+                    case "2" -> {
                         list = addShoppingList();
                         writeToJSON(currentUser, false);
-                        if (this.connectToServer) sendListToServer(list);
-                        break;
-                    case "3":
+                        if (this.connectToServer){
+                            ShoppingList newList = sendListToServer(list, this.currentUser.getUsername());
+                            if(newList!=null) this.currentUser.getShoppingLists().put(newList.getId(), newList);
+                        }
+                    }
+                    case "3" -> {
                         list = editShoppingList();
                         writeToJSON(currentUser, false);
-                        if (this.connectToServer) sendListToServer(list);
-                        break;
-                    case "4":
+                        if (this.connectToServer){
+                            ShoppingList newList = sendListToServer(list, this.currentUser.getUsername());
+                            if(newList!=null) this.currentUser.getShoppingLists().put(newList.getId(), newList);
+                        }
+                    }
+                    case "4" -> {
                         list = deleteShoppingList();
                         writeToJSON(currentUser, false);
-                        if (this.connectToServer) sendDeleteListToServer(list);
-                        break;
-                    case "5":
+                        if (this.connectToServer){
+                            sendDeleteListToServer(list, this.currentUser.getUsername());
+                        }
+                    }
+                    case "5" -> {
                         list = addProductToShoppingList();
                         writeToJSON(currentUser, false);
-                        if (this.connectToServer) sendListToServer(list);
-                        break;
-                    case "6":
+                        if (this.connectToServer){
+                            ShoppingList newList = sendListToServer(list, this.currentUser.getUsername());
+                            if(newList!=null) this.currentUser.getShoppingLists().put(newList.getId(), newList);
+                        }
+                    }
+                    case "6" -> {
                         list = editProductInShoppingList();
                         writeToJSON(currentUser, false);
-                        if (this.connectToServer) sendListToServer(list);
-                        break;
-                    case "7":
+                        if (this.connectToServer){
+                            ShoppingList newList = sendListToServer(list, this.currentUser.getUsername());
+                            if(newList!=null) this.currentUser.getShoppingLists().put(newList.getId(), newList);
+                        }
+                    }
+                    case "7" -> {
                         list = deleteProductFromShoppingList();
                         writeToJSON(currentUser, false);
-                        if (this.connectToServer) sendListToServer(list);
-                        break;
-                    case "8":
-                        viewProductsInShoppingList();
-                        break;
-                    case "9":
-                        addExistingShoppingListToUser();
-                        //need to receive shopping list to add to local files
-                        break;
-                    case "10":
-                        toggleServerConnection();
-                        break;
-                    case "11":
+                        if (this.connectToServer){
+                            ShoppingList newList = sendListToServer(list, this.currentUser.getUsername());
+                            if(newList!=null) this.currentUser.getShoppingLists().put(newList.getId(), newList);
+                        }
+                    }
+                    case "8" -> viewProductsInShoppingList();
+                    case "9" -> {
+                        if (!this.connectToServer) {
+                            System.out.println("Please establish connection first.\n");
+                        }
+                        else{
+                            addExistingShoppingListToUser();
+                        }
+                    }
+                    case "10" -> toggleServerConnection();
+                    case "11" -> {
                         return;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
+                    }
+                    default -> System.out.println("Invalid choice. Please try again.");
                 }
             }
 

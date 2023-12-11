@@ -57,7 +57,7 @@ public class Broker {
     }
 
     private void handleServerRoutRequest(ZMsg request) {
-        System.out.println("REQUEST: " + request);
+        System.out.println("\nREQUEST: " + request);
         String dealerIdentity = request.popString();
         String header = request.popString();
         String server = null;
@@ -70,30 +70,33 @@ public class Broker {
                 server = request.popString();
                 consistentHashing.addServer(server, ring);
                 response.addString(ring.toString());
-                System.out.println("RESPONSE SENT: " + response);
+                System.out.println("\nRESPONSE SENT: " + response);
                 response.send(serverRoutSocket);
             }
             case "REMOVE" -> {
-                System.out.println("SERVER REMOVED: " + ring);
+                System.out.println("\nSERVER REMOVED: " + ring);
                 server = request.popString();
                 consistentHashing.removeServer(server, ring);
             }
             default -> {
+                System.out.println("UNKNOWN MESSAGE HEADER:" + header);
             }
             //ignore
         }
     }
 
     private void handleClientRoutRequest(ZMsg request) {
-        System.out.println("REQUEST: " + request);
+        System.out.println("\nREQUEST: " + request);
         String clientIdentity = request.popString();
+        request.popString();
+        System.out.println("\nclientID: " + clientIdentity);
         String header = request.popString();
 
         switch (header) {
             case "REQUEST" -> {
                 String itemID = request.popString();
-                int hashedItemID = consistentHashing.getHash(itemID);
-                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false); // Determine the target server for this request
+
+                String targetServer = consistentHashing.getServerAfter(itemID, ring, false); // Determine the target server for this request
 
                 ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
                 serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
@@ -106,14 +109,20 @@ public class Broker {
 
                 // Wait for the server's response
                 ZMsg serverResponse = ZMsg.recvMsg(serverSocket);
+
                 if (serverResponse != null) {
                     // Forward the response back to the client
                     ZMsg clientResponse = new ZMsg();
                     clientResponse.addString(clientIdentity);
-                    clientResponse.add(serverResponse.popString());
-                    clientResponse.send(clientRoutSocket);
+                    //clientResponse.add(serverResponse.popString());
+                    System.out.println("\nRESPONSE SENT: " + serverResponse);
+                    //clientResponse.send(clientRoutSocket);
+                    clientRoutSocket.sendMore(clientIdentity);
+                    clientRoutSocket.sendMore("");
+                    clientRoutSocket.send(serverResponse.popString());
                 }
                 serverSocket.close();
+
             }
 
             case "UPDATE" -> {
@@ -127,27 +136,35 @@ public class Broker {
                 }
 
                 String itemID = item.getId().toString();
-                int hashedItemID = consistentHashing.getHash(itemID);
-                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false);
+
+                String targetServer = consistentHashing.getServerAfter(itemID, ring, false);
 
                 ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
                 serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
-
+                System.out.println("TARGET: " + targetServer.substring(0, targetServer.length() - 1) + "1");
                 // Forward the request to the server
                 ZMsg serverRequest = new ZMsg();
                 serverRequest.addString(header);
                 serverRequest.addString(jsonData);
+                System.out.println("Request to server: " + serverRequest);
                 serverRequest.send(serverSocket);
 
                 // Wait for the server's response
                 ZMsg serverResponse = ZMsg.recvMsg(serverSocket);
+
                 if (serverResponse != null) {
                     // Forward the response back to the client
                     ZMsg clientResponse = new ZMsg();
                     clientResponse.addString(clientIdentity);
-                    clientResponse.add(serverResponse.popString());
-                    clientResponse.send(clientRoutSocket);
+                    //clientResponse.add(serverResponse.popString());
+                    System.out.println("\nRESPONSE SENT: " + serverResponse);
+                    //clientResponse.send(clientRoutSocket);
+                    clientRoutSocket.sendMore(clientIdentity);
+                    clientRoutSocket.sendMore("");
+                    clientRoutSocket.send(serverResponse.popString());
                 }
+                serverSocket.close();
+
             }
             case "DELETE_LIST" -> {
                 ObjectMapper mapper = new ObjectMapper();
@@ -160,8 +177,7 @@ public class Broker {
                 }
 
                 String itemID = item.getId().toString();
-                int hashedItemID = consistentHashing.getHash(itemID);
-                String targetServer = consistentHashing.getServerAfter(hashedItemID, ring, false);
+                String targetServer = consistentHashing.getServerAfter(itemID, ring, false);
 
                 ZMQ.Socket serverSocket = context.createSocket(SocketType.DEALER);
                 serverSocket.connect(targetServer.substring(0, targetServer.length() - 1) + "1"); // Connect to the server's DEALER socket
@@ -170,11 +186,13 @@ public class Broker {
                 ZMsg serverRequest = new ZMsg();
                 serverRequest.addString(header);
                 serverRequest.addString(jsonData);
+                System.out.println("\nRESPONSE SENT: " + serverRequest);
                 serverRequest.send(serverSocket);
+                serverSocket.close();
 
             }
             default -> {
-                // Ignore other headers
+                System.out.println("UNKNOWN MESSAGE HEADER:" + header);
             }
         }
     }

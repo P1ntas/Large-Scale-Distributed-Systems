@@ -1,4 +1,4 @@
-package org.crdt;
+package frontend.crdt;
 
 import java.util.UUID;
 

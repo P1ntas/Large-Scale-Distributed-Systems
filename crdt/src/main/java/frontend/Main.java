@@ -1,7 +1,6 @@
-package org;
-import org.gui.Interface;
-import org.gui.JSONReader;
-import org.json.simple.JSONObject;
+package frontend;
+import frontend.gui.Interface;
+import frontend.gui.JSONReader;
 
 public class Main {
     public static void main(String[] args) {

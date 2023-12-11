@@ -1,4 +1,4 @@
-package org.crdt;
+package frontend.crdt;
 
 public class GCounter {
     int counter;

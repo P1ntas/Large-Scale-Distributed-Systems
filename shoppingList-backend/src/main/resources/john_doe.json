@@ -2,20 +2,24 @@
   "username" : "john_doe",
   "id" : "fafd2105-86ef-4653-9915-8960ccb09a68",
   "shoppingLists" : [ {
+    "name" : "School Supplies",
+    "id" : "52b5ad86-acc8-43fc-8aa0-a8aaa0e40658",
+    "products" : [ ]
+  }, {
     "name" : "Hardware",
     "id" : "f81f9cfb-219d-44d5-87d0-53a99e28e03f",
     "products" : [ {
-      "name" : "Nails",
+      "name" : "Nail",
       "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-      "quantity" : 12,
+      "quantity" : 0,
       "vectorClock" : {
         "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-        "timestamp" : 1699889400000
+        "timestamp" : 1702263419834
       },
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 12,
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
             "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         },
@@ -29,69 +33,29 @@
     }, {
       "name" : "Hammer",
       "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-      "quantity" : 4,
+      "quantity" : 1,
       "vectorClock" : {
         "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-        "timestamp" : 1699889400000
+        "timestamp" : 1702263419834
       },
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 4,
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 11,
             "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         },
         "negativeGCounter" : {
           "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 10,
             "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         }
       }
     } ]
   }, {
-    "name" : "Groceries",
-    "id" : "6b849aa1-5047-4e2f-957a-38b09bd20722",
-    "products" : [ {
-      "name" : "Bread",
-      "id" : "c0b067ec-a4a1-4687-8c1a-3401c2edef6e",
-      "quantity" : 4,
-      "vectorClock" : {
-        "id" : "c0b067ec-a4a1-4687-8c1a-3401c2edef6e",
-        "timestamp" : 1699889400000
-      },
-      "pnCounter" : {
-        "positiveGCounter" : {
-          "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 4
-          }
-        },
-        "negativeGCounter" : {
-          "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0
-          }
-        }
-      }
-    }, {
-      "name" : "Milk",
-      "id" : "16cb4dc7-a6ae-4430-b257-1dca01b38187",
-      "quantity" : 3,
-      "vectorClock" : {
-        "id" : "16cb4dc7-a6ae-4430-b257-1dca01b38187",
-        "timestamp" : 1699889400000
-      },
-      "pnCounter" : {
-        "positiveGCounter" : {
-          "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 4
-          }
-        },
-        "negativeGCounter" : {
-          "counter" : {
-            "fafd2105-86ef-4653-9915-8960ccb09a68" : 1
-          }
-        }
-      }
-    } ]
+    "name" : "Pet Food",
+    "id" : "5e467bb5-56d5-4f01-86b8-7aed945af2d6",
+    "products" : [ ]
   } ]
 }

@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import org.zeromq.SocketType;
 
@@ -24,10 +25,8 @@ import static com.shopup.JSONHandler.*;
 public class ServerNode {
     private final String serverAddress;
     private final ZContext context;
-
     private final ZMQ.Socket socket;
     private final ZMQ.Socket dealerSocket;
-
     private final ConsistentHashing consistentHashing;
     private TreeMap<Integer,String> ring;
     private final String brokerAddress;
@@ -37,7 +36,7 @@ public class ServerNode {
 
     private Map<String, User> userDataStore = new HashMap<>();
 
-    private List<ShoppingList> shoppingLists = new ArrayList<>();
+    private Map<String, List<ShoppingList>> shoppingLists = new HashMap<>();
     
     public ServerNode(String serverAddress, String brokerAddress) {
         this.serverAddress = serverAddress;
@@ -48,12 +47,17 @@ public class ServerNode {
         this.dealerSocket = context.createSocket(SocketType.DEALER);
         this.dealerSocket.bind(serverAddress.substring(0, serverAddress.length() - 1) + "1");
 
-        this.socket = context.createSocket(SocketType.REP);
+        this.socket = context.createSocket(SocketType.DEALER);
         this.socket.bind(serverAddress);
 
         System.out.println("server address: " + serverAddress);
         this.ring = null;
-        this.executorService = Executors.newFixedThreadPool(2);
+
+        this.shoppingLists.put("primary", new ArrayList<>());
+        this.shoppingLists.put("replica", new ArrayList<>());
+
+        this.executorService = Executors.newFixedThreadPool(3);
+
 
         try {
             this.consistentHashing = new ConsistentHashing(1, 2);
@@ -63,9 +67,11 @@ public class ServerNode {
     }
 
     public void start() {
+        System.out.println("\n Starting server: " + serverAddress);
         joinRing();
         executorService.submit(this::checkNeighbourHeatbeat);
-        executorService.submit(this::listenForMessages);
+        executorService.submit(this::listenForBeatRequest);
+        executorService.submit(this::listenForDealerRequest);
 
     }
 
@@ -83,17 +89,17 @@ public class ServerNode {
     
     private void checkNeighbourHeatbeat() {
         int failedPings = 0;
-        System.out.println("Checking neighbour heartbeat");
+        System.out.println("\nChecking neighbour heartbeat");
         while (!Thread.currentThread().isInterrupted()) {
+
             try {
                 String nextNodeAddress = consistentHashing.getServerAfter(this.serverAddress, ring, true);
-                System.out.println("NEXT NODE: " + nextNodeAddress);
                 if (nextNodeAddress != null) {
                     boolean isAlive = sendPing(nextNodeAddress);
                     if (!isAlive) {
                         failedPings++;
-                        if (failedPings >= 5) {
-                            System.out.println("DETECTED DEAD NEIGHBOUR!");
+                        if (failedPings >= 3) {
+                            System.out.println("\nDETECTED DEAD NEIGHBOUR!");
                             removeDeadNeighbour(nextNodeAddress);
                             failedPings = 0;
                         }
@@ -101,7 +107,7 @@ public class ServerNode {
                         failedPings = 0; // reset counter on successful ping
                     }
                 }
-                TimeUnit.SECONDS.sleep(1); 
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -109,14 +115,16 @@ public class ServerNode {
     }
 
     private boolean sendPing(String address) {
-        try (ZMQ.Socket pingSocket = context.createSocket(SocketType.REQ)) {
+        try (ZMQ.Socket pingSocket = context.createSocket(SocketType.DEALER)) {
+            System.out.println(address);
             pingSocket.connect(address);
             pingSocket.send("PING");
 
-            pingSocket.setReceiveTimeOut(1000);
-
+            pingSocket.setReceiveTimeOut(500);
             String response = pingSocket.recvStr();
+
             return "PONG".equals(response);
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -163,11 +171,11 @@ public class ServerNode {
         msg.send(brokerSocket);
 
         ZMsg response = ZMsg.recvMsg(brokerSocket); //not sure if this is correct
-        System.out.println("RECEIVED RESPONSE: " + response);
+        System.out.println("\nRECEIVED RESPONSE: " + response);
         if (response != null) {
             String ringState = response.popString();
             this.ring = utils.stringToTreeMap(ringState);
-            System.out.println("Received ring state: " + this.ring);
+            System.out.println("\nReceived ring state: " + this.ring);
             
 
             for (String nodeAddress : this.ring.values()) {
@@ -178,7 +186,7 @@ public class ServerNode {
                     msg.addString(this.serverAddress);
                     String addr = nodeAddress.substring(0, nodeAddress.length() - 1) + "1";
                     nodeDealerSocket.connect(addr);
-                    System.out.println("sending message: " + msg + " to: " + addr);
+                    System.out.println("\nsending message: " + msg + " to: " + addr);
                     msg.send(nodeDealerSocket);
                 }
             }
@@ -186,22 +194,22 @@ public class ServerNode {
         brokerSocket.close();
     }
 
-    private void replicate(){ // MUST BE CALLED AFTER JOIN (added node + nreplication-1 anteriores) /REMOVE (mm q join) /UPDATE (proprio) /REBALANCE(
-        System.out.println("STARTING REPLICATION PROCESS");
+    private void replicate(){
         ObjectMapper mapper = new ObjectMapper();
-
-        for (ShoppingList item : this.shoppingLists){
+        System.out.println("REPLICATING SERVER");
+        for (ShoppingList item : this.shoppingLists.get("primary")){
             String id = item.getId().toString();
             String primaryNode = this.consistentHashing.getServerAfter(id, this.ring, false);
 
             if  (this.serverAddress.equals(primaryNode)){
+                System.out.println("I HAVE PRIMARY NODES");
                 String currentServer = this.serverAddress;
 
                 for (int i = 0; i < Math.min(this.consistentHashing.getN_replication()-1,this.ring.size()-1); i++){
                     currentServer = this.consistentHashing.getServerAfter(currentServer, this.ring, true);
                     ZMQ.Socket nodeDealerSocket = context.createSocket(SocketType.DEALER);
                     ZMsg msg = new ZMsg();
-                    msg.addString("UPDATE");
+                    msg.addString("REPLICATE");
                     String jsonData = null;
                     try {
                         jsonData = mapper.writeValueAsString(item);
@@ -212,26 +220,45 @@ public class ServerNode {
                     String addr = currentServer.substring(0, currentServer.length() - 1) + "1";
                     nodeDealerSocket.connect(addr);
                     msg.send(nodeDealerSocket);
-                    System.out.println("ITEM " + jsonData + " IS BEING REPLICATED ON SERVER " + addr );
+
+                    System.out.println("\nITEM " + item.getName() + " IS BEING REPLICATED ON SERVER " + addr );
+
                 }
             }
         }
 
     }
 
-    private void rebalance(){ // MUST BE CALLED AFTER JOIN/REMOVE ON THE SERVER AFTER THE UPDATeD NDOE, CLEAN REPLICAS AFTER
-        System.out.println("STARTING REBALANCE PROCESS");
+    private void rebalance(){
         ObjectMapper mapper = new ObjectMapper();
-
-        for (ShoppingList item : this.shoppingLists){
+        for (ShoppingList item : this.shoppingLists.get("primary")){
             String id = item.getId().toString();
             String primaryNode = this.consistentHashing.getServerAfter(id, this.ring, false);
-
+            String currentServer = this.serverAddress;
             if  (!this.serverAddress.equals(primaryNode)){
+                //remove replicas from neighbors
+                /*for (int i = 0; i < Math.min(this.consistentHashing.getN_replication()-1,this.ring.size()-1); i++){
+                    System.out.println("REMOVING UNNECESSARY REPLICAS FROM NEIGHBORS");
+                    currentServer = this.consistentHashing.getServerAfter(currentServer, this.ring, true);
+                    ZMQ.Socket nodeDealerSocket = context.createSocket(SocketType.DEALER);
+                    ZMsg msg = new ZMsg();
+                    msg.addString("DELETE_REPLICA");
+                    String jsonData = null;
+                    try {
+                        jsonData = mapper.writeValueAsString(item);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    msg.addString(jsonData);
+                    String addr = currentServer.substring(0, currentServer.length() - 1) + "1";
+                    nodeDealerSocket.connect(addr);
+                    msg.send(nodeDealerSocket);
+
+                }*/
 
                 ZMQ.Socket nodeDealerSocket = context.createSocket(SocketType.DEALER);
                 ZMsg msg = new ZMsg();
-                msg.addString("UPDATE");
+                msg.addString("REBALANCE");
                 String jsonData = null;
                 try {
                     jsonData = mapper.writeValueAsString(item);
@@ -242,52 +269,61 @@ public class ServerNode {
                 String addr = primaryNode.substring(0, primaryNode.length() - 1) + "1";
                 nodeDealerSocket.connect(addr);
                 msg.send(nodeDealerSocket);
-                System.out.println("ITEM " + jsonData + " IS BEING REPLICATED ON SERVER " + addr );
+                System.out.println("\nITEM " + item.getName() + " IS BEING SENT TO SERVER " + addr );
+                this.shoppingLists.get("primary").remove(item);
 
             }
         }
 
+        boolean newPrimaryItems = false;
+
+        for (ShoppingList item : this.shoppingLists.get("replica")){
+            String id = item.getId().toString();
+            String primaryNode = this.consistentHashing.getServerAfter(id, this.ring, false);
+            if  (this.serverAddress.equals(primaryNode)){
+                System.out.println("Item " + item.getName() + " is now primary instead of replica");
+                this.shoppingLists.get("primary").add(item);
+                this.shoppingLists.get("replica").remove(item);
+                newPrimaryItems = true;
+            }
+        }
+
+        if (newPrimaryItems) replicate();
+
     }
 
-    private void listenForMessages() {
-        System.out.println("Listening for messages");
-        Poller poller = context.createPoller(2);
-        poller.register(socket, Poller.POLLIN);
-        poller.register(dealerSocket, Poller.POLLIN);
+    private void listenForBeatRequest() {
 
         while (!Thread.currentThread().isInterrupted()) {
-            poller.poll(); // Wait for an event on either socket
-
-            if (poller.pollin(0)) { // Check REP socket
-                ZMsg repRequest = ZMsg.recvMsg(socket);
-                if (repRequest != null) {
-                    handleRepRequest(repRequest);
-                }
-            }
-
-            if (poller.pollin(1)) { // Check PULL socket
-                ZMsg dealerRequest = ZMsg.recvMsg(dealerSocket);
-                if (dealerRequest != null) {
-                    handleDealerRequest(dealerRequest);
-                }
+            ZMsg beatRequest = ZMsg.recvMsg(socket);
+            if (beatRequest != null) {
+                handleBeatRequest(beatRequest);
             }
         }
     }
 
-    private void handleRepRequest(ZMsg request) {
+    private void listenForDealerRequest() {
+
+        while (!Thread.currentThread().isInterrupted()) {
+            ZMsg dealerRequest = ZMsg.recvMsg(dealerSocket);
+            if (dealerRequest != null) {
+                handleDealerRequest(dealerRequest);
+            }
+        }
+    }
+
+
+    private void handleBeatRequest(ZMsg request) {
         String header = request.popString();
         ZMsg response = new ZMsg();
-        System.out.println("REP REQUEST: " + header);
+
         switch (header) {
             case "PING" -> {
                 response.addString("PONG");
                 response.send(socket);
             }
-            case "LIST_DATA" -> {
-                //handleUserData(request);
-            }
             default -> {
-                // ignore
+                System.out.println("UNKNOWN MESSAGE HEADER:" + header);
             }
         }
     }
@@ -295,14 +331,16 @@ public class ServerNode {
     private void handleDealerRequest(ZMsg request) {
         String header = request.popString();
         String server = null;
-        System.out.println("DEALER REQUEST: " + header);
+        System.out.println("\nDEALER REQUEST: " + header);
         switch (header) {
             case "JOIN" -> {
                 server = request.popString();
                 System.out.println("SERVER JOINED: " + server);
                 consistentHashing.addServer(server, ring);
+                System.out.println();
                 rebalance();
                 replicate();
+
             }
             case "REMOVE" -> {
                 server = request.popString();
@@ -310,16 +348,22 @@ public class ServerNode {
                 consistentHashing.removeServer(server, ring);
                 rebalance();
                 replicate();
+
             }
             case "REQUEST" -> {
                 ZMsg response = new ZMsg();
                 ObjectMapper mapper = new ObjectMapper();
                 String itemID = request.popString();
                 ShoppingList requestedList = null;
+                System.out.println("LIST REQUESTED: " + itemID);
 
-                for (ShoppingList shoppingList : this.shoppingLists){
+                List<ShoppingList> combinedList = new ArrayList<>(shoppingLists.get("primary"));
+                combinedList.addAll(shoppingLists.get("replica"));
+
+                for (ShoppingList shoppingList : combinedList){
                     if(shoppingList.getId().toString().equals(itemID)){
                         requestedList = shoppingList;
+                        break;
                     }
                 }
 
@@ -337,14 +381,14 @@ public class ServerNode {
 
                 response.addString(jsonResponse);
                 response.send(this.dealerSocket);
-                rebalance();
 
             }
-            case "UPDATE" -> {
+            case "UPDATE","REPLICATE", "REBALANCE" -> {
                 ZMsg response = new ZMsg();
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonData = request.popString();
                 ShoppingList clientList, updatedList = null;
+
                 try {
                     clientList = mapper.readValue(jsonData, ShoppingList.class);
                 } catch (JsonProcessingException e) {
@@ -352,28 +396,50 @@ public class ServerNode {
                 }
 
                 String itemID = clientList.getId().toString();
-                for (ShoppingList shoppingList : this.shoppingLists){
+                System.out.println("LIST TO UPDATE: " + itemID);
+
+                List<ShoppingList> combinedList = new ArrayList<>(shoppingLists.get("primary"));
+                combinedList.addAll(shoppingLists.get("replica"));
+
+                for (ShoppingList shoppingList : combinedList){
                     if(shoppingList.getId().toString().equals(itemID)){
-                        shoppingList.merge(clientList);
+                        shoppingList = shoppingList.merge(clientList);
                         updatedList = shoppingList;
+                        break;
                     }
                 }
+
                 if(updatedList == null){
-                    this.shoppingLists.add(clientList);
+                    if(header.equals("REPLICATE")) {
+                        this.shoppingLists.get("replica").add(clientList);
+                    }
+                    else{
+                        this.shoppingLists.get("primary").add(clientList);
+                    }
+
                     updatedList = clientList;
                 }
-                String jsonResponse = null;
-                try {
-                    jsonResponse = mapper.writeValueAsString(updatedList);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+
+                if(header.equals("UPDATE")){
+                    String jsonResponse = null;
+                    try {
+                        jsonResponse = mapper.writeValueAsString(updatedList);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("response: " + jsonResponse);
+                    response.addString(jsonResponse);
+                    response.send(this.dealerSocket);
                 }
-                response.addString(jsonResponse);
-                response.send(this.dealerSocket);
-                rebalance();
-                replicate();
+
+                if(!header.equals("REPLICATE")){
+                    replicate();
+                }
+
+                System.out.println(this.shoppingLists);
             }
-            case "DELETE_LIST" -> {
+
+            case "DELETE_LIST","DELETE_REPLICA" -> {
                 ObjectMapper mapper = new ObjectMapper();
                 String jsonData = request.popString();
                 ShoppingList item = null;
@@ -384,83 +450,22 @@ public class ServerNode {
                 }
 
                 String itemID = item.getId().toString();
-                this.shoppingLists.removeIf(shoppingList -> shoppingList.getId().toString().equals(itemID));
-
+                System.out.println("DELETING LIST " + item.getName());
+                if(header.equals("DELETE_LIST")){
+                    this.shoppingLists.get("primary").removeIf(shoppingList -> shoppingList.getId().toString().equals(itemID));
+                    replicate();
+                }
+                else{
+                    this.shoppingLists.get("replica").removeIf(shoppingList -> shoppingList.getId().toString().equals(itemID));
+                }
             }
             default -> {
+                System.out.println("UNKNOWN MESSAGE HEADER:" + header);
             }
             //ignore
         }
     }
 
-    /*private void handleUserData(ZMsg request) {
-        String jsonData = request.popString();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            User user = mapper.readValue(jsonData, User.class);
-            if (user != null) {
-                user = loadAndMergeUser(user);
-            }
-            System.out.println("User data received and stored for user: " + user.getUsername());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void loadAndMergeUsers() {
-        String directoryPath = "src/main/resources/";
-        File folder = new File(directoryPath);
-        File[] listOfFiles = folder.listFiles();
-
-        if (listOfFiles != null) {
-            for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    String filename = file.getName();
-                    if (filename.endsWith(".json")) {
-                        User fileUser = null;
-                        try {
-                            fileUser = readFromJSON(filename, false);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        if (fileUser != null) {
-                            User storedUser = userDataStore.get(fileUser.getId());
-                            if (storedUser != null) {
-                                if (!storedUser.equals(fileUser)) {
-                                    User mergedUser = storedUser.merge(fileUser);
-                                    userDataStore.put(fileUser.getId(), mergedUser);
-                                    try {
-                                        writeToJSON(mergedUser, true);
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public User loadAndMergeUser(User user) {
-        User storedUser = userDataStore.get(user.getId());
-        if (storedUser != null) {
-            if (!storedUser.equals(user)) {
-                User mergedUser = storedUser.merge(user);
-                userDataStore.put(user.getId(), mergedUser);
-                try {
-                    writeToJSON(mergedUser, true);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                return mergedUser;
-            }
-        }
-        return user;
-    }*/
-
-    
     public static void main(String[] args) {
         String serverAddress;
         String brokerAddress = "tcp://127.0.0.1:5000";

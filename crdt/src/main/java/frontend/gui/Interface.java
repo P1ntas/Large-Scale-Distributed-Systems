@@ -1,6 +1,4 @@
-package org.gui;
-
-import org.gui.JSONReader;
+package frontend.gui;
 
 import java.util.Scanner;
 

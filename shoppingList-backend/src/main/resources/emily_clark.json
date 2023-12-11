@@ -2,6 +2,54 @@
   "username" : "emily_clark",
   "id" : "9d24f0c9-123b-4de5-bb8e-e14f8f14c912",
   "shoppingLists" : [ {
+    "name" : "Hardware",
+    "id" : "f81f9cfb-219d-44d5-87d0-53a99e28e03f",
+    "products" : [ {
+      "name" : "Nail",
+      "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
+      "quantity" : 0,
+      "vectorClock" : {
+        "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
+        "timestamp" : 1702266316547
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
+          }
+        }
+      }
+    }, {
+      "name" : "Hammer",
+      "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
+      "quantity" : 1,
+      "vectorClock" : {
+        "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
+        "timestamp" : 1702266316547
+      },
+      "pnCounter" : {
+        "positiveGCounter" : {
+          "counter" : {
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 11,
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
+          }
+        },
+        "negativeGCounter" : {
+          "counter" : {
+            "fafd2105-86ef-4653-9915-8960ccb09a68" : 10,
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
+          }
+        }
+      }
+    } ]
+  }, {
     "name" : "Office Supplies",
     "id" : "4b5e8e29-fc39-4410-a8b4-54f3d2f3e730",
     "products" : [ {
@@ -15,12 +63,12 @@
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 5
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 5
           }
         },
         "negativeGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         }
       }
@@ -35,12 +83,12 @@
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 20
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 20
           }
         },
         "negativeGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         }
       }
@@ -51,7 +99,7 @@
     "products" : [ {
       "name" : "Dog Food",
       "id" : "d5e6f790-1234-5678-9abc-def012345678",
-      "quantity" : 10,
+      "quantity" : 150,
       "vectorClock" : {
         "id" : "d5e6f790-1234-5678-9abc-def012345678",
         "timestamp" : 1700005600000
@@ -59,12 +107,12 @@
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 10
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 150
           }
         },
         "negativeGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         }
       }
@@ -79,63 +127,15 @@
       "pnCounter" : {
         "positiveGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 2
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 2
           }
         },
         "negativeGCounter" : {
           "counter" : {
-            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912": 0
+            "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
           }
         }
       }
     } ]
-  }, {
-      "name" : "Hardware",
-      "id" : "f81f9cfb-219d-44d5-87d0-53a99e28e03f",
-      "products" : [ {
-        "name" : "Nails",
-        "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-        "quantity" : 12,
-        "vectorClock" : {
-          "id" : "927c5c09-9ad6-42a9-8ace-541c167c0df4",
-          "timestamp" : 1699889400000
-        },
-        "pnCounter" : {
-          "positiveGCounter" : {
-            "counter" : {
-              "fafd2105-86ef-4653-9915-8960ccb09a68" : 12,
-              "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
-            }
-          },
-          "negativeGCounter" : {
-            "counter" : {
-              "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
-              "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
-            }
-          }
-        }
-      }, {
-        "name" : "Hammer",
-        "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-        "quantity" : 4,
-        "vectorClock" : {
-          "id" : "5330beba-efd5-4c59-9011-63fc2de7a9ec",
-          "timestamp" : 1699889400000
-        },
-        "pnCounter" : {
-          "positiveGCounter" : {
-            "counter" : {
-              "fafd2105-86ef-4653-9915-8960ccb09a68" : 4,
-              "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
-            }
-          },
-          "negativeGCounter" : {
-            "counter" : {
-              "fafd2105-86ef-4653-9915-8960ccb09a68" : 0,
-              "9d24f0c9-123b-4de5-bb8e-e14f8f14c912" : 0
-            }
-          }
-        }
-      } ]
-    }]
+  } ]
 }

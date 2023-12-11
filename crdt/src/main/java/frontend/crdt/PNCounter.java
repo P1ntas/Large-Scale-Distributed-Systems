@@ -1,4 +1,4 @@
-package org.crdt;
+package frontend.crdt;
 
 public class PNCounter {
     GCounter positiveGCounter;

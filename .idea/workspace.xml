@@ -6,9 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="8428ce61-81d0-4968-a4b8-3698fc091636" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/JSONHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/JSONHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TerminalInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TerminalInterface.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/TestEnvironment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/GCounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/GCounter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/JSONHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/JSONHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/PNCounter.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/PNCounter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/ShoppingList.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/ShoppingList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/crdt/VectorClock.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/crdt/VectorClock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/gui/Interface.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/gui/Interface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crdt/src/main/java/org/gui/JSONReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/crdt/src/main/java/frontend/gui/JSONReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/Broker.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/Broker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/ServerNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/src/main/java/com/shopup/ServerNode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/TerminalInterface.class" beforeDir="false" afterPath="$PROJECT_DIR$/shoppingList-backend/target/classes/com/shopup/TerminalInterface.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,17 +74,12 @@
       <recent name="$PROJECT_DIR$/crdt/src/main/java" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.TerminalInterface">
     <configuration name="Broker" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="19" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.shopup.Broker" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="JsonHandler" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="org.crdt.JSONHandler" />
+      <module name="shoppingList-backend" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -94,13 +98,56 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ServerNode" type="Application" factoryName="Application" singleton="false" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.shopup.ServerNode" />
+      <module name="shoppingList-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shopup.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TerminalInterface" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.shopup.TerminalInterface" />
+      <module name="shoppingList-backend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shopup.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="frontend.Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="frontend.Main" />
+      <module name="crdt" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="frontend.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
-      <item itemvalue="Application.JsonHandler" />
+      <item itemvalue="Application.ServerNode" />
       <item itemvalue="Application.Broker" />
+      <item itemvalue="Application.TerminalInterface" />
+      <item itemvalue="Application.frontend.Main" />
       <item itemvalue="Application.Main" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.TerminalInterface" />
+        <item itemvalue="Application.frontend.Main" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
