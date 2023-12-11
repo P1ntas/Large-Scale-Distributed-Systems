@@ -16,6 +16,11 @@ public class PNCounter {
         this.negativeGCounter = new GCounter();
     }
 
+    public PNCounter(UUID userId) {
+        this.positiveGCounter = new GCounter(userId);
+        this.negativeGCounter = new GCounter(userId);
+    }
+
     @JsonCreator
     public PNCounter(@JsonProperty("positiveGCounter") GCounter positiveGCounter,
                      @JsonProperty("negativeGCounter") GCounter negativeGCounter){

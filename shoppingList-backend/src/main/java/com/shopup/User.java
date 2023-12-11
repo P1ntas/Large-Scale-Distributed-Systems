@@ -18,7 +18,7 @@ public class User {
         this.shoppingLists = new HashMap<>();
     }
 
-    public User(String username, UUID id, HashMap<UUID, ShoppingList> shoppingLists) {
+/*    public User(String username, UUID id, HashMap<UUID, ShoppingList> shoppingLists) {
         this.username = username;
         this.id = UUID.randomUUID();
         this.shoppingLists = shoppingLists == null ? new HashMap<>() : shoppingLists;
@@ -28,7 +28,7 @@ public class User {
         this.username = username;
         this.id = id;
         this.shoppingLists = new HashMap<>();
-    }
+    }*/
 
     @JsonCreator
     public User(@JsonProperty("username") String username,
@@ -81,28 +81,15 @@ public class User {
         return Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getId(), user.getId()) && Objects.equals(getShoppingLists(), user.getShoppingLists());
     }
 
-    public User merge(User other) {
-/*        if (this.equals(other)) return this;
-        this.username = mergeNames(this.username, other.username);
 
-        for (ShoppingList list : this.shoppingLists.values()) {
-            if (other.shoppingLists.containsKey(list.getId())) {
-                list.merge(other.shoppingLists.get(list.getId()));
-            }
-        }*/
-        return this;
-    }
-
-    public void removeShoppingList(UUID id) {
+/*    public void removeShoppingList(UUID id) {
         this.shoppingLists.remove(id);
     }
 
     public void updateShoppingList(UUID shoppingListID, UUID productID, Product product){
         this.shoppingLists.get(shoppingListID).updateProduct(productID, product);
-    }
+    }*/
 
-    public void removeProduct(UUID shoppingListID, UUID productID){
-        this.shoppingLists.get(shoppingListID).removeProduct(productID);
-    }
+
 
 }
