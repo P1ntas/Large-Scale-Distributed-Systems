@@ -23,35 +23,34 @@ public class Product {
         this.pnCounter = new PNCounter();
     }
 
-    public Product(String name, int quantity) {
+    /*
+    * This constructor is used when a user adds a new product to a shopping list
+    * */
+    public Product(String name, UUID userId, int quantity) {
         this.id = UUID.randomUUID();
         this.name = name;
-        this.quantity = quantity;
+        this.pnCounter = new PNCounter(userId);
+        setQuantity(userId,quantity);
+        this.quantity = getQuantity();
         this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
     }
 
-    public Product(String name, UUID id, int quantity) {
-        this.id = id;
-        this.name = name;
-        this.quantity = quantity;
-        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
-        this.pnCounter = new PNCounter();
-    }
-
-    public Product(String name, UUID id, int quantity, long timestamp) {
-        this.id = id;
-        this.name = name;
-        this.quantity = quantity;
-        this.vectorClock = new VectorClock(this.id, timestamp);
-        this.pnCounter = new PNCounter();
-    }
-
-    public Product(String name, int quantity, VectorClock vectorClock) {
+    public Product(String name, PNCounter newPNCounter) {
         this.id = UUID.randomUUID();
         this.name = name;
-        this.quantity = quantity;
-        this.vectorClock = vectorClock;
-        this.pnCounter = new PNCounter();
+        this.pnCounter = newPNCounter;
+        this.quantity = getQuantity();
+        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
+    }
+    /*
+     * This constructor is used when a merge between two shopping lists is done and a new product is needed
+     * */
+    public Product(String name, UUID id, PNCounter newPNCounter) {
+        this.id = id;
+        this.name = name;
+        this.pnCounter = newPNCounter;
+        this.quantity = getQuantity();
+        this.vectorClock = new VectorClock(this.id, System.currentTimeMillis());
     }
 
     @JsonCreator
@@ -122,7 +121,7 @@ public class Product {
     }
 
     public Product merge(Product other) {
-        if (this.equals(other)) return null;
+
 
         this.vectorClock.setTimestamp(System.currentTimeMillis());
         other.getVectorClock().setTimestamp(System.currentTimeMillis());

@@ -103,37 +103,43 @@ class ShoppingList {
 
         /* for each product in products use the merge function of the Product class to merge products of this and other with the same id */
         for (Product product : this.products.values()) {
+
+            System.out.println("CHECKING THIS PRODUCT: " + product.getName());
             if (other.products.containsKey(product.getId())) {
                 if (product.merge(other.products.get(product.getId())) != null){
                     newShoppingList.addProduct(product);
                 }
-
             }else{
-                Product newProduct = new Product(product.getName(), product.getId(), 0, System.currentTimeMillis());
+                Product newProduct = new Product(product.getName(),product.getId(),product.getPnCounter());
                 other.addProduct(newProduct);
-                if (product.merge(other.products.get(product.getId())) != null){
-                    newShoppingList.addProduct(product);
-                }
-
+                newShoppingList.addProduct(product);
+                product.merge(other.products.get(product.getId()));
             }
         }
-
         for(Product product : other.getProducts().values()){
+
+            System.out.println("CHECKING THIS PRODUCT: " + product.getName());
+
             if (this.products.containsKey(product.getId())) {
                 if (product.merge(other.products.get(product.getId())) != null){
                     newShoppingList.addProduct(product);
                 }
             }else{
-                Product newProduct = new Product(product.getName(), product.getId(), 0, System.currentTimeMillis());
+                Product newProduct = new Product(product.getName(), product.getId(), product.getPnCounter());
                 addProduct(newProduct);
-                if (product.merge(other.products.get(product.getId())) != null){
-                    newShoppingList.addProduct(product);
-                }
+                newShoppingList.addProduct(product);
+                product.merge(other.products.get(product.getId()));
             }
+
+
+/*            System.out.println("Printing the new shopping list\n");
+            for(Product x : newShoppingList.getProductList()){
+                System.out.println(x.getName() + ": " + x.getQuantity());
+            }
+            System.out.println("Finished");*/
         }
 
-/*
-        System.out.println("THIS PRINT IS TESTING INSIDE THE SHOPPING LIST MERGE");
+/*        System.out.println("\nTHIS PRINT IS TESTING INSIDE THE SHOPPING LIST MERGE\n");
         for(Product product : newShoppingList.getProductList()){
             System.out.println(product.getName() + ": " + product.getQuantity());
         }*/
